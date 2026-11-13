@@ -140,20 +140,19 @@
         let wasPlaying = false;
         const bgm = document.getElementById('bgm');
 
-        // 页面加载自动播放音乐
-        window.addEventListener('DOMContentLoaded', function() {
-            bgm.play().then(() => {
-                musicOn = true;
-                wasPlaying = true;
-                document.getElementById('mb').textContent = '🔊 音乐';
-                document.getElementById('mb').classList.add('on');
-            }).catch(() => {
-                // 浏览器阻止自动播放时，保持静音状态
-                musicOn = false;
-                wasPlaying = false;
-                document.getElementById('mb').textContent = '🔇 音乐';
-            });
-        });
+        // 用户第一次点击页面后尝试播放音乐，不阻塞页面
+        document.addEventListener('click', function firstInteraction() {
+            if (!musicOn) {
+                bgm.play().then(() => {
+                    musicOn = true;
+                    wasPlaying = true;
+                    document.getElementById('mb').textContent = '🔊 音乐';
+                    document.getElementById('mb').classList.add('on');
+                }).catch(() => {
+                    // 浏览器阻止自动播放，静默失败，不影响页面其他功能
+                });
+            }
+        }, { once: true, passive: true });
 
         function toPage(n) {
             p = n;
@@ -224,7 +223,7 @@
                 en: {h1:'Welcome to My World',sub:'Explore wonderful content, discover more beauty',h2:'🎬 Featured Videos',h3:'📁 More Content',h4:'💬 Contact Us',prev:'◀ Previous',next:'Next ▶',nav:['Home','Videos','More','Contact']},
                 ja: {h1:'私の世界へようこそ',sub:'素晴らしいコンテンツを探検しよう',h2:'🎬 注目動画',h3:'📁 その他のコンテンツ',h4:'💬 お問い合わせ',prev:'◀ 前へ',next:'次へ ▶',nav:['ホーム','動画','その他','お問い合わせ']},
                 ko: {h1:'내 세상에 오신 것을 환영합니다',sub:'멋진 콘텐츠를 탐험하세요',h2:'🎬 추천 영상',h3:'📁 더 많은 콘텐츠',h4:'💬 문의하기',prev:'◀ 이전',next:'다음 ▶',nav:['홈','영상','더보기','문의']},
-                es: {h1:'Bienvenido a Mi Mundo',sub:'Explora contenido maravilloso',h2:'🎬 Videos Destacados',h3:'📁 Más Contenido',h4:'💬 Contáctanos',prev:'◀ Anterior',next:'Siguiente ▶',nav:['Inicio','Videos','Más','Contacto']},
+                es: {h1:'Bienvenido a Mi Mundo',sub:'Explore contenido maravilloso',h2:'🎬 Videos Destacados',h3:'📁 Más Contenido',h4:'💬 Contáctanos',prev:'◀ Anterior',next:'Siguiente ▶',nav:['Inicio','Videos','Más','Contacto']},
                 pt: {h1:'Bem-vindo ao Meu Mundo',sub:'Explore conteúdos maravilhosos',h2:'🎬 Vídeos em Destaque',h3:'📁 Mais Conteúdo',h4:'💬 Entre em Contato',prev:'◀ Anterior',next:'Próximo ▶',nav:['Início','Vídeos','Mais','Contato']},
                 de: {h1:'Willkommen in Meiner Welt',sub:'Entdecke wunderbare Inhalte',h2:'🎬 Video-Highlights',h3:'📁 Mehr Inhalt',h4:'💬 Kontakt',prev:'◀ Zurück',next:'Weiter ▶',nav:['Startseite','Videos','Mehr','Kontakt']},
                 ru: {h1:'Добро пожаловать в мой мир',sub:'Исследуйте прекрасный контент',h2:'🎬 Рекомендуемые видео',h3:'📁 Ещё контент',h4:'💬 Связаться с нами',prev:'◀ Назад',next:'Вперёд ▶',nav:['Главная','Видео','Ещё','Контакты']},
@@ -239,4 +238,4 @@
             document.getElementById('h1').textContent=t[l].h1;
             document.getElementById('sub').textContent=t[l].sub;
             document.getElementById('h2').textContent=t[l].h2;
-            document.getElementById('h3').textContent=t[l].h3;
+           
