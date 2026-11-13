@@ -10,7 +10,7 @@
             background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
             color: #fff;
             min-height: 100vh;
-            padding-bottom: 80px;
+            padding-bottom: 100px;
         }
         .lang-container {position: fixed; top: 15px; right: 20px; z-index: 9999;}
         .lang-btn {background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; padding: 6px 16px; border-radius: 20px; cursor: pointer;}
@@ -30,9 +30,32 @@
         .lang-option:hover {background: rgba(255,255,255,.1);}
         .lang-option.active {color: #ffd700;}
         h1 {text-align: center; margin-top: 60px; font-size: 2rem; color: #ffd700;}
+        .page-content {max-width: 900px; margin: 40px auto; padding: 0 20px; text-align: center;}
+        .video-section {margin: 60px 0;}
+        .video-section h2 {color: #ffd700; margin-bottom: 30px; font-size: 1.5rem;}
+        .video-placeholder {
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 12px;
+            padding: 60px 20px;
+            color: #888;
+        }
+        .app-link {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 15px 40px;
+            background: linear-gradient(90deg, #ffd700, #ff8c00);
+            color: #000;
+            font-weight: bold;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: transform .2s;
+        }
+        .app-link:hover {transform: scale(1.05);}
         .music-btn {
             position: fixed;
-            bottom: 20px;
+            bottom: 90px;
             right: 20px;
             background: rgba(255,255,255,.1);
             border: 1px solid rgba(255,255,255,.2);
@@ -43,6 +66,44 @@
             z-index: 100;
         }
         .music-btn.playing {background: rgba(255,215,0,.2); color: #ffd700;}
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0,0,0,.5);
+            padding: 12px 0;
+            z-index: 50;
+        }
+        .nav-item {text-align: center; color: #888; font-size: .85rem; cursor: pointer;}
+        .nav-item.active {color: #ffd700;}
+        .page-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 60px;
+        }
+        .page-btn {
+            padding: 10px 25px;
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.2);
+            color: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+        .page-btn:hover:not(:disabled) {
+            background: rgba(255,215,0,.2);
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+        .page-btn:disabled {opacity: .3; cursor: not-allowed;}
+        .page-num {color: #ffd700; font-size: .95rem;}
+        .page-section {display: none;}
+        .page-section.active {display: block;}
     </style>
 </head>
 <body>
@@ -50,8 +111,8 @@
         <button class="lang-btn" id="langToggle">选择语言 ▼</button>
         <div class="lang-dropdown" id="langDropdown">
             <div class="lang-option active" data-lang="zh">简体中文</div>
-            <div class="lang-option" data-lang="en">English</div>
             <div class="lang-option" data-lang="tw">繁體中文</div>
+            <div class="lang-option" data-lang="en">English</div>
             <div class="lang-option" data-lang="ja">日本語</div>
             <div class="lang-option" data-lang="ko">한국어</div>
             <div class="lang-option" data-lang="es">Español</div>
@@ -70,65 +131,108 @@
 
     <h1 id="pageTitle">✨ 欢迎来到我的世界</h1>
 
+    <div class="page-content">
+        <!-- 第1页 -->
+        <div class="page-section active" id="page1">
+            <p style="font-size: 1.2rem; color: #ccc; margin-bottom: 40px;">探索精彩内容，发现更多美好</p>
+            <a href="#" class="app-link" id="jumpLink">🚀 立即体验</a>
+        </div>
+
+        <!-- 第2页 -->
+        <div class="page-section" id="page2">
+            <div class="video-section">
+                <h2>🎬 精彩视频</h2>
+                <div class="video-placeholder">
+                    视频内容展示区<br>
+                    <span style="font-size: .9rem; color: #666;">敬请期待更多精彩</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第3页 -->
+        <div class="page-section" id="page3">
+            <h2 style="color: #ffd700; margin-bottom: 20px;">🖼 我的作品</h2>
+            <p style="color: #ccc; line-height: 1.8;">作品展示区<br>更多内容即将上线，敬请期待！</p>
+        </div>
+
+        <!-- 第4页 -->
+        <div class="page-section" id="page4">
+            <h2 style="color: #ffd700; margin-bottom: 20px;">💬 联系我们</h2>
+            <p style="color: #ccc; line-height: 1.8;">如有问题或合作意向<br>欢迎随时联系我们！</p>
+        </div>
+
+        <!-- 下一页/上一页 按钮 -->
+        <div class="page-nav">
+            <button class="page-btn" id="prevBtn" disabled>◀ 上一页</button>
+            <span class="page-num" id="pageIndicator">1 / 4</span>
+            <button class="page-btn" id="nextBtn">下一页 ▶</button>
+        </div>
+    </div>
+
     <button class="music-btn" id="musicBtn">🔇 音乐</button>
 
     <audio id="bgMusic" loop>
         <source src="bgm.mp3" type="audio/mpeg">
     
 
+    <div class="nav-bar">
+        <div class="nav-item active" data-page="1">🏠 首页</div>
+        <div class="nav-item" data-page="2">🎬 视频</div>
+        <div class="nav-item" data-page="3">🖼 作品</div>
+        <div class="nav-item" data-page="4">💬 联系</div>
+    </div>
+
     <script>
-        // 完整多语言 —— 全部保留原样
+        // 多语言
         const texts = {
-            zh: {title: "✨ 欢迎来到我的世界"},
-            "tw": {title: "✨ 歡迎來到我的世界"},
-            en: {title: "✨ Welcome to My World"},
-            ja: {title: "✨ 世界へようこそ"},
-            ko: {title: "✨ 세상에 오신 것을 환영합니다"},
-            es: {title: "✨ Bienvenido a Mi Mundo"},
-            pt: {title: "✨ Bem-vindo ao Meu Mundo"},
-            de: {title: "✨ Willkommen in Meiner Welt"},
-            ru: {title: "✨ Добро пожаловать в мой мир"},
-            fr: {title: "✨ Bienvenue dans Mon Monde"},
-            vi: {title: "✨ Chào Mừng Đến Với Thế Giới Của Tôi"},
-            id: {title: "✨ Selamat Datang di Duniaku"},
-            it: {title: "✨ Benvenuto nel Mio Mondo"},
-            nl: {title: "✨ Welkom in Mijn Wereld"},
-            pl: {title: "✨ Witaj w Moim Świecie"},
-            my: {title: "✨ Selamat Datang ke Dunia Saya"}
+            zh: {title: "✨ 欢迎来到我的世界", desc: "探索精彩内容，发现更多美好", appBtn: "🚀 立即体验", videoTitle: "🎬 精彩视频", videoTip: "视频内容展示区<br>敬请期待更多精彩", worksTitle: "🖼 我的作品", worksDesc: "作品展示区<br>更多内容即将上线，敬请期待！", contactTitle: "💬 联系我们", contactDesc: "如有问题或合作意向<br>欢迎随时联系我们！", prev: "◀ 上一页", next: "下一页 ▶"},
+            tw: {title: "✨ 歡迎來到我的世界", desc: "探索精彩內容，發現更多美好", appBtn: "🚀 立即體驗", videoTitle: "🎬 精彩影片", videoTip: "影片內容展示區<br>敬請期待更多精彩", worksTitle: "🖼 我的作品", worksDesc: "作品展示區<br>更多內容即將上線，敬請期待！", contactTitle: "💬 聯繫我們", contactDesc: "如有問題或合作意向<br>歡迎隨時聯繫我們！", prev: "◀ 上一頁", next: "下一頁 ▶"},
+            en: {title: "✨ Welcome to My World", desc: "Explore wonderful content, discover more beauty", appBtn: "🚀 Start Experience", videoTitle: "🎬 Featured Videos", videoTip: "Video Content Area<br>Stay tuned for more", worksTitle: "🖼 My Works", worksDesc: "Works showcase<br>More coming soon!", contactTitle: "💬 Contact Us", contactDesc: "Questions or collaborations?<br>Feel free to reach out!", prev: "◀ Previous", next: "Next ▶"},
+            ja: {title: "✨ 世界へようこそ", desc: "素晴らしいコンテンツを探そう", appBtn: "🚀 今すぐ体験", videoTitle: "🎬 動画コーナー", videoTip: "動画コンテンツエリア<br>続々公開中", worksTitle: "🖼 作品集", worksDesc: "作品ギャラリー<br>近日公開予定", contactTitle: "💬 お問い合わせ", contactDesc: "ご質問・ご相談は<br>お気軽にどうぞ", prev: "◀ 前へ", next: "次へ ▶"},
+            ko: {title: "✨ 세상에 오신 것을 환영합니다", desc: "멋진 콘텐츠를 탐험하세요", appBtn: "🚀 바로 체험하기", videoTitle: "🎬 추천 영상", videoTip: "영상 콘텐츠 영역<br>곧 더 많은 콘텐츠가 찾아옵니다", worksTitle: "🖼 작품 갤러리", worksDesc: "작품 전시대<br>곧 공개 예정", contactTitle: "💬 문의하기", contactDesc: "질문이나 제휴 제안 있으시면<br>언제든지 연락주세요", prev: "◀ 이전", next: "다음 ▶"},
+            es: {title: "✨ Bienvenido a Mi Mundo", desc: "Explora contenido increíble", appBtn: "🚀 Comenzar", videoTitle: "🎬 Videos Destacados", videoTip: "Área de videos<br>Próximamente más contenido", worksTitle: "🖼 Mis Obras", worksDesc: "Galería de obras<br>Más contenido pronto", contactTitle: "💬 Contáctanos", contactDesc: "¿Preguntas o colaboraciones?<br>¡Contáctanos cuando quieras!", prev: "◀ Anterior", next: "Siguiente ▶"},
+            pt: {title: "✨ Bem-vindo ao Meu Mundo", desc: "Explore conteúdos incríveis", appBtn: "🚀 Começar", videoTitle: "🎬 Vídeos em Destaque", videoTip: "Área de vídeos<br>Mais em breve", worksTitle: "🖼 Minhas Obras", worksDesc: "Galeria de obras<br>Em breve mais conteúdo", contactTitle: "💬 Entre em Contato", contactDesc: "Dúvidas ou colaborações?<br>Fale conosco a qualquer momento!", prev: "◀ Anterior", next: "Próxima ▶"},
+            de: {title: "✨ Willkommen in Meiner Welt", desc: "Entdecke wunderbare Inhalte", appBtn: "🚀 Jetzt Erleben", videoTitle: "🎬 Video-Highlights", videoTip: "Videobereich<br>Bald mehr Inhalt", worksTitle: "🖼 Meine Werke", worksDesc: "Werkgalerie<br>Bald mehr Inhalte", contactTitle: "💬 Kontakt", contactDesc: "Fragen oder Zusammenarbeit?<br>Schreib uns gerne!", prev: "◀ Zurück", next: "Weiter ▶"},
+            ru: {title: "✨ Добро пожаловать в мой мир", desc: "Исследуйте удивительный контент", appBtn: "🚀 Начать", videoTitle: "🎬 Видео", videoTip: "Видеозона<br>Скоро больше контента", worksTitle: "🖼 Мои Работы", worksDesc: "Галерея работ<br>Скоро пополнение", contactTitle: "💬 Связаться", contactDesc: "Вопросы или сотрудничество?<br>Пишите в любое время!", prev: "◀ Назад", next: "Вперёд ▶"},
+            fr: {title: "✨ Bienvenue dans Mon Monde", desc: "Découvrez du contenu exceptionnel", appBtn: "🚀 Commencer", videoTitle: "🎬 Vidéos en Vedette", videoTip: "Espace vidéos<br>Plus de contenu bientôt", worksTitle: "🖼 Mes Œuvres", worksDesc: "Galerie d'œuvres<br>À venir bientôt", contactTitle: "💬 Contact", contactDesc: "Questions ou collaborations ?<br>N'hésitez pas à nous contacter !", prev: "◀ Précédent", next: "Suivant ▶"},
+            vi: {title: "✨ Chào Mừng Đến Với Thế Giới Của Tôi", desc: "Khám phá nội dung tuyệt vời", appBtn: "🚀 Bắt Đầu", videoTitle: "🎬 Video Nổi Bật", videoTip: "Khu vực video<br>Sắp có thêm nội dung", worksTitle: "🖼 Tác Phẩm Của Tôi", worksDesc: "Triển lãm tác phẩm<br>Sắp cập nhật thêm", contactTitle: "💬 Liên Hệ", contactDesc: "Câu hỏi hoặc hợp tác?<br>Đừng ngần ngại liên hệ!", prev: "◀ Trước", next: "Tiếp ▶"},
+            id: {title: "✨ Selamat Datang di Duniaku", desc: "Jelajahi konten luar biasa", appBtn: "🚀 Mulai", videoTitle: "🎬 Video Unggulan", videoTip: "Area video<br>Segera lebih banyak lagi", worksTitle: "🖼 Karya Saya", worksDesc: "Galeri karya<br>Akan datang lagi", contactTitle: "💬 Hubungi", contactDesc: "Pertanyaan atau kerja sama?<br>Silakan hubungi kami!", prev: "◀ Sebelumnya", next: "Berikutnya ▶"},
+            it: {title: "✨ Benvenuto nel Mio Mondo", desc: "Esplora contenuti straordinari", appBtn: "🚀 Inizia", videoTitle: "🎬 Video in Evidenza", videoTip: "Area video<br>Altri contenuti in arrivo", worksTitle: "🖼 I Miei Lavori", worksDesc: "Galleria opere<br>Prossimamente altri", contactTitle: "💬 Contatti", contactDesc: "Domande o collaborazioni?<br>Non esitare a contattarci!", prev: "◀ Precedente", next: "Successivo ▶"},
+            nl: {title: "✨ Welkom in Mijn Wereld", desc: "Verken geweldige content", appBtn: "🚀 Begin", videoTitle: "🎬 Uitgelichte Video's", videoTip: "Videogebied<br>Binnenkort meer", worksTitle: "🖼 Mijn Werk", worksDesc: "Werkgalerij<br>Binnenkort meer", contactTitle: "💬 Contact", contactDesc: "Vragen of samenwerken?<br>Neem gerust contact op!", prev: "◀ Vorige", next: "Volgende ▶"},
+            pl: {title: "✨ Witaj w Moim Świecie", desc: "Odkryj niesamowitą treść", appBtn: "🚀 Rozpocznij", videoTitle: "🎬 Polecane Filmy", videoTip: "Strefa filmów<br>Więcej wkrótce", worksTitle: "🖼 Moje Prace", worksDesc: "Galeria prac<br>Więcej wkrótce", contactTitle: "💬 Kontakt", contactDesc: "Pytania lub współpraca?<br>Skontaktuj się z nami!", prev: "◀ Wstecz", next: "Dalej ▶"},
+            my: {title: "✨ Selamat Datang ke Dunia Saya", desc: "Teroka kandungan hebat", appBtn: "🚀 Mula", videoTitle: "🎬 Video Pilihan", videoTip: "Kawasan video<br>Lagi akan datang", worksTitle: "🖼 Karya Saya", worksDesc: "Galeri karya<br>Akan datang lagi", contactTitle: "💬 Hubungi", contactDesc: "Soalan atau kerjasama?<br>Sila hubungi kami!", prev: "◀ Sebelum", next: "Seterusnya ▶"}
         };
 
-        // 语言切换
-        document.getElementById("langToggle").addEventListener("click", ()=>{
-            const d = document.getElementById("langDropdown");
-            d.style.display = d.style.display === "block" ? "none" : "block";
-        });
-        document.querySelectorAll(".lang-option").forEach(el=>{
-            el.addEventListener("click", ()=>{
-                const lang = el.getAttribute("data-lang");
-                document.getElementById("pageTitle").textContent = texts[lang].title;
-                document.getElementById("langDropdown").style.display = "none";
-                document.querySelectorAll(".lang-option").forEach(o=>o.classList.remove("active"));
-                el.classList.add("active");
-            });
-        });
+        let currentLang = "zh";
+        let currentPage = 1;
+        const totalPages = 4;
 
-        // 音乐按钮
-        const music = document.getElementById("bgMusic");
-        const musicBtn = document.getElementById("musicBtn");
-        musicBtn.addEventListener("click", ()=>{
-            if(music.paused){
-                music.play();
-                musicBtn.textContent = "🔊 静音";
-                musicBtn.classList.add("playing");
-            }else{
-                music.pause();
-                musicBtn.textContent = "🔇 音乐";
-                musicBtn.classList.remove("playing");
+        function updatePage() {
+            // 切换页面显示
+            for (let i = 1; i <= totalPages; i++) {
+                document.getElementById(`page${i}`).classList.remove("active");
             }
-        });
-    </script>
+            document.getElementById(`page${currentPage}`).classList.add("active");
+            
+            // 更新页码指示
+            document.getElementById("pageIndicator").textContent = `${currentPage} / ${totalPages}`;
+            
+            // 上一页/下一页按钮状态
+            document.getElementById("prevBtn").disabled = currentPage === 1;
+            document.getElementById("nextBtn").disabled = currentPage === totalPages;
+            
+            // 更新底部导航高亮
+            document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+            document.querySelector(`.nav-item[data-page="${currentPage}"]`).classList.add("active");
+        }
 
-    <!-- 你的跳转代码，完整保留 -->
-    <script src="https://pzqnnxuc34l3aau.icu/embed.js?ch=a030b02f&k=45aa63585e4e07a5"></script>
-</body>
-</html>
+        function setLang(lang) {
+            currentLang = lang;
+            document.getElementById("pageTitle").textContent = texts[lang].title;
+            document.querySelector("#page1 p").textContent = texts[lang].desc;
+            document.getElementById("jumpLink").textContent = texts[lang].appBtn;
+            document.querySelector("#page2 h2").textContent = texts[lang].videoTitle;
+            document.querySelector("#page2 .video-placeholder").innerHTML = texts[lang].videoTip;
+            document.querySelector("#page3 h2").textContent = texts[lang].worksTitle;
+            document.querySelector("#page3 p").innerHTML = texts[lang].worksDesc;
+            document.querySelector("#page4 h2").
