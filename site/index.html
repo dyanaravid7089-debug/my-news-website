@@ -37,20 +37,17 @@
         .nav button {background:none;border:none;color:#888;padding:8px 15px;}
         .nav button.active {color:#fff;border-bottom:2px solid #e94560;}
 
-        /* 音乐按钮样式 */
         #musicBtn {position:fixed;top:15px;right:15px;background:rgba(0,0,0,0.6);color:#fff;border:none;padding:6px 12px;border-radius:20px;cursor:pointer;z-index:9999;font-size:14px;}
         #musicBtn:hover {transform:scale(1.05);}
     </style>
 </head>
 <body>
 
-    <!-- 背景音乐 -->
     <audio id="bgMusic" loop>
-        <source src="bgm.mp3" type="audio/mpeg">
+        <source src="site/bgm.mp3" type="audio/mpeg">
         您的浏览器不支持音频播放。
     
 
-    <!-- 音乐控制按钮 -->
     <button id="musicBtn">🔇 音乐</button>
 
     <div class="lang-container">
@@ -129,7 +126,6 @@
     </div>
 
     <script>
-        // 音乐控制
         const music = document.getElementById('bgMusic');
         const musicBtn = document.getElementById('musicBtn');
         music.volume = 0.3;
@@ -144,7 +140,6 @@
             }
         });
 
-        // 语言切换
         let currentLang = 'zh';
         const langToggle = document.getElementById('langToggle');
         const langMenu = document.getElementById('langMenu');
@@ -169,4 +164,5 @@
                     zh: '🇨🇳 简体中文 ▼', tw: '🇹🇼 繁體中文 ▼', en: '🇬🇧 English ▼',
                     th: '🇹🇭 ไทย ▼', ja: '🇯🇵 日本語 ▼', ko: '🇰🇷 한국어 ▼',
                     es: '🇪🇸 Español ▼', pt: '🇧🇷 Português ▼', fr: '🇫🇷 Français ▼',
-                    de: '🇩🇪 Deutsch ▼', ru: '🇷🇺 Русский ▼', ar: '🇸🇦
+                    de: '🇩🇪 Deutsch ▼', ru: '🇷🇺 Русский ▼', ar: '🇸🇦 العربية ▼',
+                    vi: '🇻🇳 Tiếng Việt ▼', id:
