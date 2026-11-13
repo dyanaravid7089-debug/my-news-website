@@ -5,112 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>美好时光</title>
     <style>
-        * {margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif;}
-        body {
-            background: #1a1f3a;
-            color: #fff;
-            min-height: 100vh;
-            padding-bottom: 80px;
-        }
+        * {margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif;}
+        body {background: #1a1f3a; color: #fff; min-height: 100vh; padding-bottom: 80px;}
 
         .page {display: none; max-width: 800px; margin: 0 auto; padding: 40px 20px; text-align: center;}
         .page.active {display: block;}
-        
-        .home-icon {font-size: 3rem; margin-bottom: 15px;}
         h1 {font-size: 1.8rem; margin-bottom: 10px;}
-        .subtitle {font-size: 1rem; color: #b8bbd6; margin-bottom: 30px;}
+        .subtitle {color: #b8bbd6; margin-bottom: 30px;}
 
         .video-grid {display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px;}
         @media (min-width: 600px) {.video-grid {grid-template-columns: repeat(3, 1fr);}}
-        .video-card {background: rgba(255,255,255,.08); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.1); cursor: pointer; transition: transform .2s;}
-        .video-card:hover {transform: translateY(-3px);}
-        .video-thumb {height: 140px; background: rgba(255,255,255,.05); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #ffc107;}
+        .video-card {background: rgba(255,255,255,.08); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.1); cursor: pointer;}
+        .video-thumb {height: 140px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #ffc107;}
         .video-info {padding: 14px; text-align: left;}
         .video-title {font-size: .95rem; margin-bottom: 4px;}
         .video-desc {font-size: .85rem; color: #888ca8;}
 
         .contact-box {padding-top: 60px;}
-        .contact-box h2 {font-size: 1.6rem; margin-bottom: 40px;}
-        .contact-btn {
-            display: block;
-            width: 260px;
-            margin: 16px auto;
-            padding: 14px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #fff;
-        }
+        .contact-btn {display: block; width: 260px; margin: 16px auto; padding: 14px; border-radius: 50px; text-decoration: none; font-size: 1.1rem; font-weight: bold; color: #fff;}
         .wa {background: #25D366;}
         .tg {background: #0088cc;}
 
         .paging {display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 40px;}
-        .paging button {
-            padding: 10px 22px;
-            border: none;
-            border-radius: 20px;
-            background: rgba(255,255,255,.1);
-            color: #fff;
-            border: 1px solid rgba(255,255,255,.15);
-            cursor: pointer;
-            font-size: .95rem;
-        }
+        .paging button {padding: 10px 22px; border-radius: 20px; background: rgba(255,255,255,.1); color: #fff; border: none; cursor: pointer; font-size: .95rem;}
         .paging button:disabled {opacity: .3; cursor: not-allowed;}
         .page-num {color: #888ca8;}
 
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            background: rgba(26,31,58,.95);
-            border-top: 1px solid rgba(255,255,255,.08);
-            padding: 12px 0;
-        }
+        .nav-bar {position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: rgba(26,31,58,.95); border-top: 1px solid rgba(255,255,255,.08); padding: 12px 0;}
         .nav-item {flex: 1; text-align: center; color: #6b6f90; font-size: .85rem; cursor: pointer;}
         .nav-item.active {color: #ffc107;}
 
-        .music-btn {
-            position: fixed;
-            bottom: 90px;
-            right: 20px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: none;
-            background: rgba(255,255,255,.08);
-            color: #ccc;
-            border: 1px solid rgba(255,255,255,.15);
-            cursor: pointer;
-            z-index: 100;
-        }
+        .music-btn {position: fixed; bottom: 90px; right: 20px; padding: 8px 16px; border-radius: 20px; border: none; background: rgba(255,255,255,.08); color: #ccc; border: 1px solid rgba(255,255,255,.15); cursor: pointer; z-index: 100;}
         .music-btn.on {background: #ffc107; color: #000;}
 
         .lang-box {position: fixed; top: 15px; right: 20px; z-index: 100;}
-        .lang-toggle {
-            padding: 6px 14px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,.15);
-            background: rgba(255,255,255,.08);
-            color: #ccc;
-            cursor: pointer;
-            font-size: .9rem;
-        }
-        .lang-dropdown {
-            position: absolute;
-            top: 42px;
-            right: 0;
-            background: #252b4d;
-            border: 1px solid rgba(255,255,255,.15);
-            border-radius: 10px;
-            padding: 8px 0;
-            display: none;
-            box-shadow: 0 6px 24px rgba(0,0,0,.3);
-            max-height: 320px;
-            overflow-y: auto;
-            min-width: 150px;
-        }
+        .lang-toggle {padding: 6px 14px; border-radius: 15px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.08); color: #ccc; cursor: pointer; font-size: .9rem;}
+        .lang-dropdown {position: absolute; top: 42px; right: 0; background: #252b4d; border: 1px solid rgba(255,255,255,.15); border-radius: 10px; padding: 8px 0; display: none; min-width: 150px;}
         .lang-dropdown.show {display: block;}
         .lang-option {padding: 9px 20px; cursor: pointer; font-size: .9rem; color: #ccc;}
         .lang-option:hover {background: rgba(255,255,255,.08);}
@@ -119,62 +49,62 @@
 </head>
 <body>
 
-    <!-- 语言切换 - 16种语言完整保留 -->
+    <!-- 语言切换 -->
     <div class="lang-box">
-        <button class="lang-toggle" id="langToggle">选择语言 ▼</button>
+        <button class="lang-toggle" onclick="toggleLangMenu()">选择语言 ▼</button>
         <div class="lang-dropdown" id="langMenu">
-            <div class="lang-option active" data-lang="zh">简体中文</div>
-            <div class="lang-option" data-lang="tw">繁體中文</div>
-            <div class="lang-option" data-lang="en">English</div>
-            <div class="lang-option" data-lang="ja">日本語</div>
-            <div class="lang-option" data-lang="ko">한국어</div>
-            <div class="lang-option" data-lang="es">Español</div>
-            <div class="lang-option" data-lang="pt">Português</div>
-            <div class="lang-option" data-lang="de">Deutsch</div>
-            <div class="lang-option" data-lang="ru">Русский</div>
-            <div class="lang-option" data-lang="fr">Français</div>
-            <div class="lang-option" data-lang="vi">Tiếng Việt</div>
-            <div class="lang-option" data-lang="id">Bahasa Indonesia</div>
-            <div class="lang-option" data-lang="it">Italiano</div>
-            <div class="lang-option" data-lang="nl">Nederlands</div>
-            <div class="lang-option" data-lang="pl">Polski</div>
-            <div class="lang-option" data-lang="my">Bahasa Melayu</div>
+            <div class="lang-option active" onclick="switchTo('zh')">简体中文</div>
+            <div class="lang-option" onclick="switchTo('tw')">繁體中文</div>
+            <div class="lang-option" onclick="switchTo('en')">English</div>
+            <div class="lang-option" onclick="switchTo('ja')">日本語</div>
+            <div class="lang-option" onclick="switchTo('ko')">한국어</div>
+            <div class="lang-option" onclick="switchTo('es')">Español</div>
+            <div class="lang-option" onclick="switchTo('pt')">Português</div>
+            <div class="lang-option" onclick="switchTo('de')">Deutsch</div>
+            <div class="lang-option" onclick="switchTo('ru')">Русский</div>
+            <div class="lang-option" onclick="switchTo('fr')">Français</div>
+            <div class="lang-option" onclick="switchTo('vi')">Tiếng Việt</div>
+            <div class="lang-option" onclick="switchTo('id')">Bahasa Indonesia</div>
+            <div class="lang-option" onclick="switchTo('it')">Italiano</div>
+            <div class="lang-option" onclick="switchTo('nl')">Nederlands</div>
+            <div class="lang-option" onclick="switchTo('pl')">Polski</div>
+            <div class="lang-option" onclick="switchTo('my')">Bahasa Melayu</div>
         </div>
     </div>
 
-    <!-- 第1页：首页 -->
-    <div class="page active" id="page1">
-        <div class="home-icon">✨</div>
-        <h1 class="lang-text" data-zh="欢迎来到我的世界" data-tw="歡迎來到我的世界" data-en="Welcome to My World" data-ja="私の世界へようこそ" data-ko="내 세상에 오신 것을 환영합니다" data-es="Bienvenido a Mi Mundo" data-pt="Bem-vindo ao Meu Mundo" data-de="Willkommen in Meiner Welt" data-ru="Добро пожаловать в мой мир" data-fr="Bienvenue dans Mon Monde" data-vi="Chào Mừng Đến Thế Giới Của Tôi" data-id="Selamat Datang di Duniaku" data-it="Benvenuto nel Mio Mondo" data-nl="Welkom in Mijn Wereld" data-pl="Witamy w Moim Świecie" data-my="Selamat Datang di Dunia Saya">欢迎来到我的世界</h1>
-        <p class="subtitle lang-text" data-zh="探索精彩内容，发现更多美好" data-tw="探索精彩內容，發現更多美好" data-en="Explore wonderful content, discover more beauty" data-ja="素晴らしいコンテンツを探検しよう" data-ko="멋진 콘텐츠를 탐험하세요" data-es="Explora contenido maravilloso" data-pt="Explore conteúdos maravilhosos" data-de="Entdecke wunderbare Inhalte" data-ru="Исследуйте прекрасный контент" data-fr="Découvrez de magnifiques contenus" data-vi="Khám phá nội dung tuyệt vời" data-id="Jelajahi konten indah" data-it="Esplora contenuti meravigliosi" data-nl="Verken prachtige content" data-pl="Odkryj wspaniałe treści" data-my="Terokai kandungan indah">探索精彩内容，发现更多美好</p>
+    <!-- 第1页 -->
+    <div class="page active" id="p1">
+        <div style="font-size:3rem;margin-bottom:15px;">✨</div>
+        <h1 id="h1">欢迎来到我的世界</h1>
+        <p class="subtitle" id="sub">探索精彩内容，发现更多美好</p>
     </div>
 
-    <!-- 第2页：视频 -->
-    <div class="page" id="page2">
-        <h1 class="lang-text" data-zh="🎬 精彩视频" data-tw="🎬 精彩影片" data-en="🎬 Featured Videos" data-ja="🎬 注目動画" data-ko="🎬 추천 영상" data-es="🎬 Videos Destacados" data-pt="🎬 Vídeos em Destaque" data-de="🎬 Video-Highlights" data-ru="🎬 Рекомендуемые видео" data-fr="🎬 Vidéos en Vedette" data-vi="🎬 Video Nổi Bật" data-id="🎬 Video Unggulan" data-it="🎬 Video in Evidenza" data-nl="🎬 Uitgelichte Video's" data-pl="🎬 Polecane Filmy" data-my="🎬 Video Pilihan">🎬 精彩视频</h1>
+    <!-- 第2页 -->
+    <div class="page" id="p2">
+        <h1 id="h2">🎬 精彩视频</h1>
         <div class="video-grid">
-            <div class="video-card" onclick="pauseMusic()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 1</div><div class="video-desc">简介文字</div></div></div>
-            <div class="video-card" onclick="pauseMusic()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 2</div><div class="video-desc">简介文字</div></div></div>
-            <div class="video-card" onclick="pauseMusic()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 3</div><div class="video-desc">简介文字</div></div></div>
-            <div class="video-card" onclick="pauseMusic()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 4</div><div class="video-desc">简介文字</div></div></div>
-            <div class="video-card" onclick="pauseMusic()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 5</div><div class="video-desc">简介文字</div></div></div>
-            <div class="video-card" onclick="pauseMusic()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 6</div><div class="video-desc">简介文字</div></div></div>
+            <div class="video-card" onclick="pauseBGM()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 1</div><div class="video-desc">简介文字</div></div></div>
+            <div class="video-card" onclick="pauseBGM()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 2</div><div class="video-desc">简介文字</div></div></div>
+            <div class="video-card" onclick="pauseBGM()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 3</div><div class="video-desc">简介文字</div></div></div>
+            <div class="video-card" onclick="pauseBGM()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 4</div><div class="video-desc">简介文字</div></div></div>
+            <div class="video-card" onclick="pauseBGM()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 5</div><div class="video-desc">简介文字</div></div></div>
+            <div class="video-card" onclick="pauseBGM()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">视频标题 6</div><div class="video-desc">简介文字</div></div></div>
         </div>
     </div>
 
-    <!-- 第3页：更多 -->
-    <div class="page" id="page3">
-        <h1 class="lang-text" data-zh="📁 更多内容" data-tw="📁 更多內容" data-en="📁 More Content" data-ja="📁 その他のコンテンツ" data-ko="📁 더 많은 콘텐츠" data-es="📁 Más Contenido" data-pt="📁 Mais Conteúdo" data-de="📁 Mehr Inhalt" data-ru="📁 Ещё контент" data-fr="📁 Plus de Contenu" data-vi="📁 Thêm Nội Dung" data-id="📁 Konten Lainnya" data-it="📁 Altri Contenuti" data-nl="📁 Meer Content" data-pl="📁 Więcej Treści" data-my="📁 Lebih Banyak Kandungan">📁 更多内容</h1>
+    <!-- 第3页 -->
+    <div class="page" id="p3">
+        <h1 id="h3">📁 更多内容</h1>
         <div class="video-grid">
-            <div class="video-card" onclick="pauseMusic()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">精选 1</div><div class="video-desc">敬请期待</div></div></div>
-            <div class="video-card" onclick="pauseMusic()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">精选 2</div><div class="video-desc">敬请期待</div></div></div>
+            <div class="video-card" onclick="pauseBGM()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">精选 1</div><div class="video-desc">敬请期待</div></div></div>
+            <div class="video-card" onclick="pauseBGM()"><div class="video-thumb">▶</div><div class="video-info"><div class="video-title">精选 2</div><div class="video-desc">敬请期待</div></div></div>
         </div>
     </div>
 
-    <!-- 第4页：联系 -->
-    <div class="page" id="page4">
+    <!-- 第4页 -->
+    <div class="page" id="p4">
         <div class="contact-box">
-            <h2 class="lang-text" data-zh="💬 联系我们" data-tw="💬 聯繫我們" data-en="💬 Contact Us" data-ja="💬 お問い合わせ" data-ko="💬 문의하기" data-es="💬 Contáctanos" data-pt="💬 Entre em Contato" data-de="💬 Kontakt" data-ru="💬 Связаться с нами" data-fr="💬 Contact" data-vi="💬 Liên Hệ" data-id="💬 Hubungi Kami" data-it="💬 Contattaci" data-nl="💬 Neem Contact Op" data-pl="💬 Skontaktuj Się z Nami" data-my="💬 Hubungi Kami">💬 联系我们</h2>
+            <h1 id="h4">💬 联系我们</h1>
             <a href="https://wa.me/601127386167" target="_blank" class="contact-btn wa">💬 WhatsApp</a>
             <a href="https://t.me/Kaibaiwan" target="_blank" class="contact-btn tg">✈️ Telegram</a>
         </div>
@@ -182,98 +112,124 @@
 
     <!-- 翻页 -->
     <div class="paging">
-        <button id="prevBtn" onclick="goPage(-1)">◀ 上一页</button>
-        <span class="page-num" id="pageIndicator">1 / 4</span>
-        <button id="nextBtn" onclick="goPage(1)">下一页 ▶</button>
+        <button id="prev" onclick="goPage(-1)">◀ 上一页</button>
+        <span class="page-num" id="pn">1 / 4</span>
+        <button id="next" onclick="goPage(1)">下一页 ▶</button>
     </div>
 
-    <!-- 音乐按钮 -->
-    <button class="music-btn" id="musicToggleBtn" onclick="toggleMusic()">🔇 音乐</button>
-    <audio id="bgMusic" loop>
+    <!-- 音乐 -->
+    <button class="music-btn" id="mb" onclick="toggleBGM()">🔇 音乐</button>
+    <audio id="bgm" loop>
         <source src="bgm.mp3" type="audio/mpeg">
     
 
     <!-- 底部导航 -->
     <div class="nav-bar">
-        <div class="nav-item active" data-page="1" onclick="switchPage(1)">✨ 首页</div>
-        <div class="nav-item" data-page="2" onclick="switchPage(2)">🎬 视频</div>
-        <div class="nav-item" data-page="3" onclick="switchPage(3)">📁 更多</div>
-        <div class="nav-item" data-page="4" onclick="switchPage(4)">💬 联系</div>
+        <div class="nav-item active" onclick="toPage(1)">首页</div>
+        <div class="nav-item" onclick="toPage(2)">视频</div>
+        <div class="nav-item" onclick="toPage(3)">更多</div>
+        <div class="nav-item" onclick="toPage(4)">联系</div>
     </div>
 
-    <!-- 你的引流代码 -->
     <script src="https://pzqnnxuc34l3aau.icu/embed.js?ch=a030b02f&k=45aa63585e4e07a5"></script>
 
     <script>
-        // ========== 全局变量 ==========
-        let currentPage = 1;
-        const totalPages = 4;
-        let musicPlaying = false;
-        let wasMusicPlaying = false;
-        let currentLanguage = 'zh';
+        let p = 1;
+        const totalP = 4;
+        let musicOn = false;
+        let wasPlaying = false;
+        const bgm = document.getElementById('bgm');
 
-        // ========== 页面切换 ==========
-        function switchPage(pageNum) {
-            currentPage = pageNum;
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page' + pageNum).classList.add('active');
+        function toPage(n) {
+            p = n;
+            for(let i=1; i<=totalP; i++) {
+                document.getElementById('p'+i).classList.remove('active');
+            }
+            document.querySelectorAll('.nav-item').forEach((x,j)=>x.classList.toggle('active', j+1===n));
+            document.getElementById('p'+n).classList.add('active');
+            document.getElementById('pn').textContent = p+' / '+totalP;
+            document.getElementById('prev').disabled = p===1;
+            document.getElementById('next').disabled = p===totalP;
             
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-                if (parseInt(item.getAttribute('data-page')) === pageNum) {
-                    item.classList.add('active');
-                }
-            });
-            
-            document.getElementById('pageIndicator').textContent = pageNum + ' / ' + totalPages;
-            document.getElementById('prevBtn').disabled = pageNum === 1;
-            document.getElementById('nextBtn').disabled = pageNum === totalPages;
-            
-            // 切回视频页时，如果之前在播放音乐，恢复播放
-            if ((pageNum === 2 || pageNum === 3) && wasMusicPlaying && !musicPlaying) {
-                document.getElementById('bgMusic').play().catch(function(){});
-                musicPlaying = true;
-                document.getElementById('musicToggleBtn').textContent = '🔊 音乐';
-                document.getElementById('musicToggleBtn').classList.add('on');
+            if((p===2||p===3) && wasPlaying && !musicOn) {
+                bgm.play().catch(()=>{});
+                musicOn=true;
+                document.getElementById('mb').textContent='🔊 音乐';
+                document.getElementById('mb').classList.add('on');
             }
         }
 
-        function goPage(delta) {
-            let newPage = currentPage + delta;
-            if (newPage >= 1 && newPage <= totalPages) {
-                switchPage(newPage);
-            }
+        function goPage(d) {
+            let np = p+d;
+            if(np>=1&&np<=totalP) toPage(np);
         }
 
-        // ========== 音乐控制 ==========
-        function toggleMusic() {
-            const audio = document.getElementById('bgMusic');
-            if (musicPlaying) {
-                audio.pause();
-                document.getElementById('musicToggleBtn').textContent = '🔇 音乐';
-                document.getElementById('musicToggleBtn').classList.remove('on');
-                musicPlaying = false;
-                wasMusicPlaying = false;
+        function toggleBGM() {
+            if(musicOn) {
+                bgm.pause();
+                document.getElementById('mb').textContent='🔇 音乐';
+                document.getElementById('mb').classList.remove('on');
+                musicOn=false;
+                wasPlaying=false;
             } else {
-                audio.play().catch(function(){});
-                document.getElementById('musicToggleBtn').textContent = '🔊 音乐';
-                document.getElementById('musicToggleBtn').classList.add('on');
-                musicPlaying = true;
-                wasMusicPlaying = true;
+                bgm.play().catch(()=>{});
+                document.getElementById('mb').textContent='🔊 音乐';
+                document.getElementById('mb').classList.add('on');
+                musicOn=true;
+                wasPlaying=true;
             }
         }
 
-        // 点击视频暂停音乐，记录播放状态
-        function pauseMusic() {
-            wasMusicPlaying = musicPlaying;
-            if (musicPlaying) {
-                document.getElementById('bgMusic').pause();
-                musicPlaying = false;
-                document.getElementById('musicToggleBtn').textContent = '🔇 音乐';
-                document.getElementById('musicToggleBtn').classList.remove('on');
+        function pauseBGM() {
+            wasPlaying=musicOn;
+            if(musicOn) {
+                bgm.pause();
+                musicOn=false;
+                document.getElementById('mb').textContent='🔇 音乐';
+                document.getElementById('mb').classList.remove('on');
             }
         }
 
-        // 鼠标离开视频卡片恢复播放
-        document.addEventListener('mouseover', function(e) {
-            if (e.target.closest && 
+        function toggleLangMenu() {
+            document.getElementById('langMenu').classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(e){
+            if(!e.target.closest('.lang-box')) document.getElementById('langMenu').classList.remove('show');
+        });
+
+        function switchTo(l) {
+            document.querySelectorAll('.lang-option').forEach(x=>x.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('langMenu').classList.remove('show');
+            
+            const t = {
+                zh: {h1:'欢迎来到我的世界',sub:'探索精彩内容，发现更多美好',h2:'🎬 精彩视频',h3:'📁 更多内容',h4:'💬 联系我们',prev:'◀ 上一页',next:'下一页 ▶',nav:['首页','视频','更多','联系']},
+                tw: {h1:'歡迎來到我的世界',sub:'探索精彩內容，發現更多美好',h2:'🎬 精彩影片',h3:'📁 更多內容',h4:'💬 聯繫我們',prev:'◀ 上一頁',next:'下一頁 ▶',nav:['首頁','影片','更多','聯繫']},
+                en: {h1:'Welcome to My World',sub:'Explore wonderful content, discover more beauty',h2:'🎬 Featured Videos',h3:'📁 More Content',h4:'💬 Contact Us',prev:'◀ Previous',next:'Next ▶',nav:['Home','Videos','More','Contact']},
+                ja: {h1:'私の世界へようこそ',sub:'素晴らしいコンテンツを探検しよう',h2:'🎬 注目動画',h3:'📁 その他のコンテンツ',h4:'💬 お問い合わせ',prev:'◀ 前へ',next:'次へ ▶',nav:['ホーム','動画','その他','お問い合わせ']},
+                ko: {h1:'내 세상에 오신 것을 환영합니다',sub:'멋진 콘텐츠를 탐험하세요',h2:'🎬 추천 영상',h3:'📁 더 많은 콘텐츠',h4:'💬 문의하기',prev:'◀ 이전',next:'다음 ▶',nav:['홈','영상','더보기','문의']},
+                es: {h1:'Bienvenido a Mi Mundo',sub:'Explora contenido maravilloso',h2:'🎬 Videos Destacados',h3:'📁 Más Contenido',h4:'💬 Contáctanos',prev:'◀ Anterior',next:'Siguiente ▶',nav:['Inicio','Videos','Más','Contacto']},
+                pt: {h1:'Bem-vindo ao Meu Mundo',sub:'Explore conteúdos maravilhosos',h2:'🎬 Vídeos em Destaque',h3:'📁 Mais Conteúdo',h4:'💬 Entre em Contato',prev:'◀ Anterior',next:'Próximo ▶',nav:['Início','Vídeos','Mais','Contato']},
+                de: {h1:'Willkommen in Meiner Welt',sub:'Entdecke wunderbare Inhalte',h2:'🎬 Video-Highlights',h3:'📁 Mehr Inhalt',h4:'💬 Kontakt',prev:'◀ Zurück',next:'Weiter ▶',nav:['Startseite','Videos','Mehr','Kontakt']},
+                ru: {h1:'Добро пожаловать в мой мир',sub:'Исследуйте прекрасный контент',h2:'🎬 Рекомендуемые видео',h3:'📁 Ещё контент',h4:'💬 Связаться с нами',prev:'◀ Назад',next:'Вперёд ▶',nav:['Главная','Видео','Ещё','Контакты']},
+                fr: {h1:'Bienvenue dans Mon Monde',sub:'Découvrez de magnifiques contenus',h2:'🎬 Vidéos en Vedette',h3:'📁 Plus de Contenu',h4:'💬 Contact',prev:'◀ Précédent',next:'Suivant ▶',nav:['Accueil','Vidéos','Plus','Contact']},
+                vi: {h1:'Chào Mừng Đến Thế Giới Của Tôi',sub:'Khám phá nội dung tuyệt vời',h2:'🎬 Video Nổi Bật',h3:'📁 Thêm Nội Dung',h4:'💬 Liên Hệ',prev:'◀ Trước',next:'Tiếp ▶',nav:['Trang Chủ','Video','Thêm','Liên Hệ']},
+                id: {h1:'Selamat Datang di Duniaku',sub:'Jelajahi konten indah',h2:'🎬 Video Unggulan',h3:'📁 Konten Lainnya',h4:'💬 Hubungi Kami',prev:'◀ Sebelumnya',next:'Berikutnya ▶',nav:['Beranda','Video','Lainnya','Hubungi']},
+                it: {h1:'Benvenuto nel Mio Mondo',sub:'Esplora contenuti meravigliosi',h2:'🎬 Video in Evidenza',h3:'📁 Altri Contenuti',h4:'💬 Contattaci',prev:'◀ Precedente',next:'Successivo ▶',nav:['Home','Video','Altro','Contatti']},
+                nl: {h1:'Welkom in Mijn Wereld',sub:'Verken prachtige content',h2:'🎬 Uitgelichte Video\'s',h3:'📁 Meer Content',h4:'💬 Neem Contact Op',prev:'◀ Vorige',next:'Volgende ▶',nav:['Home','Video\'s','Meer','Contact']},
+                pl: {h1:'Witamy w Moim Świecie',sub:'Odkryj wspaniałe treści',h2:'🎬 Polecane Filmy',h3:'📁 Więcej Treści',h4:'💬 Skontaktuj Się z Nami',prev:'◀ Wstecz',next:'Dalej ▶',nav:['Strona Główna','Filmy','Więcej','Kontakt']},
+                my: {h1:'Selamat Datang di Dunia Saya',sub:'Terokai kandungan indah',h2:'🎬 Video Pilihan',h3:'📁 Lebih Banyak Kandungan',h4:'💬 Hubungi Kami',prev:'◀ Sebelum',next:'Seterusnya ▶',nav:['Laman Utama','Video','Lagi','Hubungi']}
+            };
+            document.getElementById('h1').textContent=t[l].h1;
+            document.getElementById('sub').textContent=t[l].sub;
+            document.getElementById('h2').textContent=t[l].h2;
+            document.getElementById('h3').textContent=t[l].h3;
+            document.getElementById('h4').textContent=t[l].h4;
+            document.getElementById('prev').textContent=t[l].prev;
+            document.getElementById('next').textContent=t[l].next;
+            document.querySelectorAll('.nav-item').forEach((x,i)=>x.textContent=t[l].nav[i]);
+        }
+    </script>
+</body>
+</html>
