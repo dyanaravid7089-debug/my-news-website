@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,102 +12,261 @@
         .page.active { display: block; }
         
         h1 { font-size: 1.5rem; text-align: center; margin-bottom: 10px; }
-        .sub-title { text-align: center; color: #ddd; margin-bottom: 40px; font-size: 1rem; }
+        .sub-title { text-align: center; color: #ddd; margin-bottom: 30px; font-size: 1rem; }
+        
+        .page-img { width: 100%; max-width: 400px; border-radius: 12px; display: block; margin: 0 auto 30px; }
         
         .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 40px; }
         .card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 30px 10px; text-align: center; font-size: 15px; color: #eee; }
         
         .warning-box { background: rgba(139, 30, 63, 0.3); border-radius: 12px; padding: 30px 20px; margin-bottom: 40px; text-align: center; line-height: 1.8; font-size: 16px; }
         
-        .question-box { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 30px 20px; margin-bottom: 40px; line-height: 2; font-size: 16px; }
+        .question-box { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 30px 20px; margin-bottom: 40px; line-height: 1.8; font-size: 16px; }
         
         .btn-wrap { display: flex; gap: 15px; margin-top: 20px; }
         .btn { flex: 1; padding: 15px; font-size: 18px; border-radius: 50px; border: none; cursor: pointer; font-weight: bold; }
         .btn-yes { background: #fff; color: #000; }
         .btn-no { background: #8b1e3f; color: #fff; border: 2px solid #8b1e3f; }
         .btn-next { width: 100%; background: #8b1e3f; color: #fff; font-size: 18px; border-radius: 50px; padding: 15px; border: none; cursor: pointer; font-weight: bold; }
-        .btn-enter { width: 100%; background: #8b1e3f; color: #fff; font-size: 18px; border-radius: 50px; padding: 15px; border: none; cursor: pointer; font-weight: bold; margin-top: 30px; }
         
-        .result-box { background: rgba(139, 30, 63, 0.3); border-radius: 12px; padding: 40px 20px; text-align: center; line-height: 2; font-size: 16px; margin-bottom: 30px; }
+        .result-box { background: rgba(139, 30, 63, 0.3); border-radius: 12px; padding: 40px 20px; text-align: center; line-height: 1.8; font-size: 16px; margin-bottom: 30px; }
         
         .contact-links { margin-top: 30px; text-align: center; }
         .contact-link { display: block; width: 240px; margin: 15px auto; padding: 14px; border-radius: 50px; color: white; text-decoration: none; font-weight: bold; font-size: 16px; }
         .wa { background: #25D366; }
         .tg { background: #0088cc; }
+        
+        [data-lang] { display: none !important; }
+        body.lang-zh [data-lang="zh"] { display: inline !important; }
+        body.lang-en [data-lang="en"] { display: inline !important; }
+        body.lang-es [data-lang="es"] { display: inline !important; }
+        body.lang-fr [data-lang="fr"] { display: inline !important; }
+        body.lang-de [data-lang="de"] { display: inline !important; }
+        body.lang-ru [data-lang="ru"] { display: inline !important; }
+        body.lang-ja [data-lang="ja"] { display: inline !important; }
+        body.lang-ko [data-lang="ko"] { display: inline !important; }
+        body.lang-pt [data-lang="pt"] { display: inline !important; }
+        body.lang-it [data-lang="it"] { display: inline !important; }
+        body.lang-nl [data-lang="nl"] { display: inline !important; }
+        body.lang-ar [data-lang="ar"] { display: inline !important; }
+        
+        body.lang-ar { direction: rtl; }
     </style>
 </head>
-<body>
+<body class="lang-zh" id="body">
 
     <!-- 第1页：欢迎页 -->
     <div class="page active" id="page1">
-        <h1>你將進入不一樣的圈子</h1>
-        <p class="sub-title">滿足你各種興趣和癖好</p>
+        <h1>
+            <span data-lang="zh">你將進入不一樣的圈子</span>
+            <span data-lang="en">Enter a Different Circle</span>
+            <span data-lang="es">Entra a un círculo especial</span>
+            <span data-lang="fr">Rejoignez un cercle unique</span>
+            <span data-lang="de">Betreten Sie einen besonderen Kreis</span>
+            <span data-lang="ru">Войдите в особый круг</span>
+            <span data-lang="ja">特別なサークルへようこそ</span>
+            <span data-lang="ko">특별한 서클에 오신 것을 환영합니다</span>
+            <span data-lang="pt">Entre em um círculo especial</span>
+            <span data-lang="it">Entra in un cerchio speciale</span>
+            <span data-lang="nl">Betreed een bijzondere kring</span>
+            <span data-lang="ar">ادخل إلى دائرة مميزة</span>
+        </h1>
+        <p class="sub-title">
+            <span data-lang="zh">滿足你各種興趣和癖好</span>
+            <span data-lang="en">Discover Your Interests</span>
+            <span data-lang="es">Descubre tus intereses</span>
+            <span data-lang="fr">Découvrez vos passions</span>
+            <span data-lang="de">Entdecken Sie Ihre Leidenschaften</span>
+            <span data-lang="ru">Откройте свои увлечения</span>
+            <span data-lang="ja">あなたの興味を発見しよう</span>
+            <span data-lang="ko">당신의 관심사를 발견하세요</span>
+            <span data-lang="pt">Descubra seus interesses</span>
+            <span data-lang="it">Scopri i tuoi interessi</span>
+            <span data-lang="nl">Ontdek jouw interesses</span>
+            <span data-lang="ar">اكتشف اهتماماتك</span>
+        </p>
+        <img src="https://i.imgur.com/jpHe8Z2.jpeg" alt="" class="page-img">
         
         <div class="card-grid">
-            <div class="card">同城綠帽圈</div>
-            <div class="card">同城SM</div>
-            <div class="card">同城母子亂倫演繹</div>
-            <div class="card">同城絲襪服裝控</div>
+            <div class="card">
+                <span data-lang="zh">專屬圈子</span>
+                <span data-lang="en">Exclusive Circle</span>
+                <span data-lang="es">Círculo exclusivo</span>
+                <span data-lang="fr">Cercle exclusif</span>
+                <span data-lang="de">Exklusiver Kreis</span>
+                <span data-lang="ru">Эксклюзивный круг</span>
+                <span data-lang="ja">限定サークル</span>
+                <span data-lang="ko">독점 서클</span>
+                <span data-lang="pt">Círculo exclusivo</span>
+                <span data-lang="it">Cerchio esclusivo</span>
+                <span data-lang="nl">Exclusieve kring</span>
+                <span data-lang="ar">دائرة حصرية</span>
+            </div>
+            <div class="card">
+                <span data-lang="zh">興趣匹配</span>
+                <span data-lang="en">Match Interests</span>
+                <span data-lang="es">Coincide intereses</span>
+                <span data-lang="fr">Rencontrez des passions</span>
+                <span data-lang="de">Passionen teilen</span>
+                <span data-lang="ru">Найдите единомышленников</span>
+                <span data-lang="ja">共通の興味でつながる</span>
+                <span data-lang="ko">관심사로 연결</span>
+                <span data-lang="pt">Conecte-se por interesses</span>
+                <span data-lang="it">Connetti interessi</span>
+                <span data-lang="nl">Vind gelijkgestemden</span>
+                <span data-lang="ar">التوافق في الاهتمامات</span>
+            </div>
+            <div class="card">
+                <span data-lang="zh">私密安全</span>
+                <span data-lang="en">Private & Safe</span>
+                <span data-lang="es">Privado y seguro</span>
+                <span data-lang="fr">Privé et sécurisé</span>
+                <span data-lang="de">Privat & sicher</span>
+                <span data-lang="ru">Конфиденциально и безопасно</span>
+                <span data-lang="ja">プライベートで安全</span>
+                <span data-lang="ko">안전하고 비밀보장</span>
+                <span data-lang="pt">Privado e seguro</span>
+                <span data-lang="it">Privato e sicuro</span>
+                <span data-lang="nl">Privé en veilig</span>
+                <span data-lang="ar">خاص وآمن</span>
+            </div>
+            <div class="card">
+                <span data-lang="zh">尊重包容</span>
+                <span data-lang="en">Respect & Inclusion</span>
+                <span data-lang="es">Respeto y respaldo</span>
+                <span data-lang="fr">Respect et tolérance</span>
+                <span data-lang="de">Respekt & Akzeptanz</span>
+                <span data-lang="ru">Уважение и принятие</span>
+                <span data-lang="ja">尊重と多様性</span>
+                <span data-lang="ko">존중과 포용</span>
+                <span data-lang="pt">Respeito e acolhimento</span>
+                <span data-lang="it">Rispetto e inclusione</span>
+                <span data-lang="nl">Respect en acceptatie</span>
+                <span data-lang="ar">الاحترام والقبول</span>
+            </div>
         </div>
         
-        <button class="btn-next" onclick="goPage(2)">繼續 →</button>
+        <button class="btn-next" onclick="goPage(2)">
+            <span data-lang="zh">繼續 →</span>
+            <span data-lang="en">Continue →</span>
+            <span data-lang="es">Continuar →</span>
+            <span data-lang="fr">Continuer →</span>
+            <span data-lang="de">Weiter →</span>
+            <span data-lang="ru">Продолжить →</span>
+            <span data-lang="ja">次へ →</span>
+            <span data-lang="ko">계속 →</span>
+            <span data-lang="pt">Continuar →</span>
+            <span data-lang="it">Continua →</span>
+            <span data-lang="nl">Verder →</span>
+            <span data-lang="ar">متابعة →</span>
+        </button>
     </div>
 
     <!-- 第2页：警告页 -->
     <div class="page" id="page2">
-        <h1>⚠️ 警告！</h1>
+        <h1>
+            <span data-lang="zh">⚠️ 警告！</span>
+            <span data-lang="en">⚠️ Warning!</span>
+            <span data-lang="es">⚠️ ¡Advertencia!</span>
+            <span data-lang="fr">⚠️ Avertissement!</span>
+            <span data-lang="de">⚠️ Warnung!</span>
+            <span data-lang="ru">⚠️ Внимание!</span>
+            <span data-lang="ja">⚠️ 注意！</span>
+            <span data-lang="ko">⚠️ 경고!</span>
+            <span data-lang="pt">⚠️ Aviso!</span>
+            <span data-lang="it">⚠️ Attenzione!</span>
+            <span data-lang="nl">⚠️ Waarschuwing!</span>
+            <span data-lang="ar">⚠️ تحذير!</span>
+        </h1>
+        <img src="https://i.imgur.com/jpHe8Z2.jpeg" alt="" class="page-img">
         <div class="warning-box">
-            在進入圈子尋找之前，需要遵守以下相關內容，請仔細閱讀並同意。
+            <span data-lang="zh">在進入之前，請遵守以下規則，仔細閱讀並同意。</span>
+            <span data-lang="en">Before entering, please read and agree to these rules carefully.</span>
+            <span data-lang="es">Antes de entrar, lee y acepta las siguientes reglas.</span>
+            <span data-lang="fr">Avant de continuer, lisez et acceptez ces règles.</span>
+            <span data-lang="de">Bitte lesen und akzeptieren Sie diese Regeln.</span>
+            <span data-lang="ru">Перед входом прочитайте и примите правила.</span>
+            <span data-lang="ja">入る前に、以下の規則をお読みください。</span>
+            <span data-lang="ko">시작 전, 규칙을 읽고 동의하세요.</span>
+            <span data-lang="pt">Antes de entrar, leia e aceite as regras.</span>
+            <span data-lang="it">Prima di procedere, leggi e accetta le regole.</span>
+            <span data-lang="nl">Lees en accepteer deze regels alstublieft.</span>
+            <span data-lang="ar">قبل الدخول، اقرأ القواعد ووافق عليها.</span>
         </div>
-        <button class="btn-next" onclick="goPage(3)">下一步 →</button>
+        <button class="btn-next" onclick="goPage(3)">
+            <span data-lang="zh">下一步 →</span>
+            <span data-lang="en">Next →</span>
+            <span data-lang="es">Siguiente →</span>
+            <span data-lang="fr">Suivant →</span>
+            <span data-lang="de">Weiter →</span>
+            <span data-lang="ru">Далее →</span>
+            <span data-lang="ja">次へ →</span>
+            <span data-lang="ko">다음 →</span>
+            <span data-lang="pt">Próximo →</span>
+            <span data-lang="it">Successivo →</span>
+            <span data-lang="nl">Volgende →</span>
+            <span data-lang="ar">التالي →</span>
+        </button>
     </div>
 
     <!-- 第3页：问题1 -->
     <div class="page" id="page3">
-        <h1>問題 1</h1>
+        <h1>
+            <span data-lang="zh">問題 1</span>
+            <span data-lang="en">Question 1</span>
+            <span data-lang="es">Pregunta 1</span>
+            <span data-lang="fr">Question 1</span>
+            <span data-lang="de">Frage 1</span>
+            <span data-lang="ru">Вопрос 1</span>
+            <span data-lang="ja">質問 1</span>
+            <span data-lang="ko">질문 1</span>
+            <span data-lang="pt">Pergunta 1</span>
+            <span data-lang="it">Domanda 1</span>
+            <span data-lang="nl">Vraag 1</span>
+            <span data-lang="ar">السؤال 1</span>
+        </h1>
+        <img src="https://i.imgur.com/jpHe8Z2.jpeg" alt="" class="page-img">
         <div class="question-box">
-            在我們圈子登記註冊的會員，因為都是一個城市的，很容易碰見身邊的熟人，必須替對方身份保密，若發生洩露會員基本情況，踢出圈子，永久拉黑。
+            <span data-lang="zh">請尊重他人隱私，嚴格保密其他成員身份。若洩露他人資訊，將永久取消資格。</span>
+            <span data-lang="en">Respect privacy. Keep others' identities confidential. Leaking info results in permanent ban.</span>
+            <span data-lang="es">Respeta la privacidad. Protege la identidad de los demás. Fuga de datos = expulsión permanente.</span>
+            <span data-lang="fr">Respectez la vie privée. Confidentialité absolue. Divulgation = exclusion définitive.</span>
+            <span data-lang="de">Schütze die Privatsphäre. Keine Weitergabe von Daten. Verstoß = dauerhafter Ausschluss.</span>
+            <span data-lang="ru">Соблюдать конфиденциальность. Разглашение = вечный бан.</span>
+            <span data-lang="ja">プライバシーを尊重。情報漏洩は永久追放。</span>
+            <span data-lang="ko">프라이버시를 존중하세요. 정보 유출시 영구 제명.</span>
+            <span data-lang="pt">Respeite a privacidade. Sigilo absoluto. Vazamento = banimento permanente.</span>
+            <span data-lang="it">Rispetta la privacy. Segretezza assoluta. Violazione = esclusione permanente.</span>
+            <span data-lang="nl">Bescherm privacy. Geheimhouding. Schending = permanente uitsluiting.</span>
+            <span data-lang="ar">احترم الخصوصية. حافظ على سرية الهويات. الإفصاح = حظر دائم.</span>
         </div>
         <div class="btn-wrap">
-            <button class="btn btn-yes" onclick="goPage(4)">是</button>
-            <button class="btn btn-no" onclick="goPage(4)">否</button>
-        </div>
-    </div>
-
-    <!-- 第4页：问题2 -->
-    <div class="page" id="page4">
-        <h1>問題 2</h1>
-        <div class="question-box">
-            都是有著特殊癖好人群小眾圈子的愛好者，裡面很多人有特殊癖好，不能滿足或者不能接受，就不要去打擾。選對你自己的圈子，不要亂進。
-        </div>
-        <div class="btn-wrap">
-            <button class="btn btn-yes" onclick="goPage(5)">是</button>
-            <button class="btn btn-no" onclick="goPage(5)">否</button>
-        </div>
-    </div>
-
-    <!-- 第5页：结果页 -->
-    <div class="page" id="page5">
-        <h1>恭喜你通過篩選！</h1>
-        <div class="result-box">
-            恭喜你通過篩選！點擊下面按鈕，聯繫接待人員，開始你的專屬體驗吧。
-        </div>
-        
-        <div class="contact-links">
-            <a href="https://wa.me/601127386167" target="_blank" class="contact-link wa">💬 WhatsApp 聯繫</a>
-            <a href="https://t.me/Kaibaiwan" target="_blank" class="contact-link tg">✈️ Telegram 聯繫</a>
-        </div>
-    </div>
-
-    <script>
-        function goPage(n) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page' + n).classList.add('active');
-            window.scrollTo(0, 0);
-        }
-    </script>
-
-    <!-- 你的引流代码 -->
-    <script src="https://pzqnnxuc34l3aau.icu/embed.js?ch=a030b02f&k=45aa63585e4e07a5"></script>
-</body>
-</html>
+            <button class="btn btn-yes" onclick="goPage(4)">
+                <span data-lang="zh">是</span>
+                <span data-lang="en">Yes</span>
+                <span data-lang="es">Sí</span>
+                <span data-lang="fr">Oui</span>
+                <span data-lang="de">Ja</span>
+                <span data-lang="ru">Да</span>
+                <span data-lang="ja">はい</span>
+                <span data-lang="ko">예</span>
+                <span data-lang="pt">Sim</span>
+                <span data-lang="it">Sì</span>
+                <span data-lang="nl">Ja</span>
+                <span data-lang="ar">نعم</span>
+            </button>
+            <button class="btn btn-no" onclick="goPage(4)">
+                <span data-lang="zh">否</span>
+                <span data-lang="en">No</span>
+                <span data-lang="es">No</span>
+                <span data-lang="fr">Non</span>
+                <span data-lang="de">Nein</span>
+                <span data-lang="ru">Нет</span>
+                <span data-lang="ja">いいえ</span>
+                <span data-lang="ko">아니오</span>
+                <span data-lang="pt">Não</span>
+                <span data-lang="it">No</span>
+                <span data-lang="nl">Nee</span>
+                <span data-lang="ar">لا</span>
+            </button>
+       
