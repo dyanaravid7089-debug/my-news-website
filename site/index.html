@@ -35,7 +35,7 @@
         .nav-item {flex: 1; text-align: center; color: #6b6f90; font-size: .85rem; cursor: pointer;}
         .nav-item.active {color: #ffc107;}
 
-        .music-btn {position: fixed; bottom: 90px; right: 20px; padding: 8px 16px; border-radius: 20px; border: none; background: rgba(255,255,255,.08); color: #ccc; border: 1px solid rgba(255,255,255,.15); cursor: pointer; z-index: 100;}
+        .music-btn {position: fixed; bottom: 90px; right: 20px; padding: 8px 16px; border-radius: 20px; border: none; background: rgba(255,255,255,.08); color: #ccc; border: 1px solid rgba(255,255,255,.15); cursor: pointer; z-index: 100; transition: all .3s;}
         .music-btn.on {background: #ffc107; color: #000;}
 
         .lang-box {position: fixed; top: 15px; right: 20px; z-index: 100;}
@@ -140,6 +140,21 @@
         let wasPlaying = false;
         const bgm = document.getElementById('bgm');
 
+        // 页面加载自动播放音乐
+        window.addEventListener('DOMContentLoaded', function() {
+            bgm.play().then(() => {
+                musicOn = true;
+                wasPlaying = true;
+                document.getElementById('mb').textContent = '🔊 音乐';
+                document.getElementById('mb').classList.add('on');
+            }).catch(() => {
+                // 浏览器阻止自动播放时，保持静音状态
+                musicOn = false;
+                wasPlaying = false;
+                document.getElementById('mb').textContent = '🔇 音乐';
+            });
+        });
+
         function toPage(n) {
             p = n;
             for(let i=1; i<=totalP; i++) {
@@ -216,7 +231,7 @@
                 fr: {h1:'Bienvenue dans Mon Monde',sub:'Découvrez de magnifiques contenus',h2:'🎬 Vidéos en Vedette',h3:'📁 Plus de Contenu',h4:'💬 Contact',prev:'◀ Précédent',next:'Suivant ▶',nav:['Accueil','Vidéos','Plus','Contact']},
                 vi: {h1:'Chào Mừng Đến Thế Giới Của Tôi',sub:'Khám phá nội dung tuyệt vời',h2:'🎬 Video Nổi Bật',h3:'📁 Thêm Nội Dung',h4:'💬 Liên Hệ',prev:'◀ Trước',next:'Tiếp ▶',nav:['Trang Chủ','Video','Thêm','Liên Hệ']},
                 id: {h1:'Selamat Datang di Duniaku',sub:'Jelajahi konten indah',h2:'🎬 Video Unggulan',h3:'📁 Konten Lainnya',h4:'💬 Hubungi Kami',prev:'◀ Sebelumnya',next:'Berikutnya ▶',nav:['Beranda','Video','Lainnya','Hubungi']},
-                it: {h1:'Benvenuto nel Mio Mondo',sub:'Esplora contenuti meravigliosi',h2:'🎬 Video in Evidenza',h3:'📁 Altri Contenuti',h4:'💬 Contattaci',prev:'◀ Precedente',next:'Successivo ▶',nav:['Home','Video','Altro','Contatti']},
+                it: {h1:'Benvenuto nel Mio Mondo',sub:'Esplora contenuti meravigliosi',h2:'🎬 Video in Evidenza',h3:'📁 Altri Contenuti',h4:'💬 Contattaci',prev:'◀ Precedente',next:'Successivo ▶',nav:['Home','Video','Altro','Contatto']},
                 nl: {h1:'Welkom in Mijn Wereld',sub:'Verken prachtige content',h2:'🎬 Uitgelichte Video\'s',h3:'📁 Meer Content',h4:'💬 Neem Contact Op',prev:'◀ Vorige',next:'Volgende ▶',nav:['Home','Video\'s','Meer','Contact']},
                 pl: {h1:'Witamy w Moim Świecie',sub:'Odkryj wspaniałe treści',h2:'🎬 Polecane Filmy',h3:'📁 Więcej Treści',h4:'💬 Skontaktuj Się z Nami',prev:'◀ Wstecz',next:'Dalej ▶',nav:['Strona Główna','Filmy','Więcej','Kontakt']},
                 my: {h1:'Selamat Datang di Dunia Saya',sub:'Terokai kandungan indah',h2:'🎬 Video Pilihan',h3:'📁 Lebih Banyak Kandungan',h4:'💬 Hubungi Kami',prev:'◀ Sebelum',next:'Seterusnya ▶',nav:['Laman Utama','Video','Lagi','Hubungi']}
@@ -225,11 +240,3 @@
             document.getElementById('sub').textContent=t[l].sub;
             document.getElementById('h2').textContent=t[l].h2;
             document.getElementById('h3').textContent=t[l].h3;
-            document.getElementById('h4').textContent=t[l].h4;
-            document.getElementById('prev').textContent=t[l].prev;
-            document.getElementById('next').textContent=t[l].next;
-            document.querySelectorAll('.nav-item').forEach((x,i)=>x.textContent=t[l].nav[i]);
-        }
-    </script>
-</body>
-</html>
