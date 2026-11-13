@@ -3,165 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的网站</title>
+    <title>欢迎进入</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-        body { background: #1a1f3a; color: #fff; padding-bottom: 70px; min-height: 100vh; }
-        .page { display: none; padding: 30px 20px; max-width: 800px; margin: 0 auto; text-align: center; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
+        body { background: #2b1423; color: #fff; min-height: 100vh; }
+        
+        .page { display: none; padding: 40px 20px; max-width: 500px; margin: 0 auto; min-height: 100vh; }
         .page.active { display: block; }
-        h1 { font-size: 1.6rem; margin-bottom: 15px; }
-        .subtitle { color: #aaa; margin-bottom: 30px; }
         
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: rgba(0,0,0,0.9); padding: 10px 0; }
-        .nav-item { flex: 1; text-align: center; color: #888; padding: 10px 0; cursor: pointer; font-size: 14px; }
-        .nav-item.active { color: #ffc107; }
+        h1 { font-size: 1.5rem; text-align: center; margin-bottom: 10px; }
+        .sub-title { text-align: center; color: #ddd; margin-bottom: 40px; font-size: 1rem; }
         
-        .paging { margin: 30px 0; display: flex; justify-content: center; gap: 20px; align-items: center; }
-        button { padding: 10px 20px; font-size: 15px; border-radius: 4px; background: #ffc107; border: none; cursor: pointer; color: #000; }
-        button:disabled { opacity: 0.4; cursor: not-allowed; }
-        #pageNum { color: #ccc; min-width: 60px; text-align: center; }
+        .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 40px; }
+        .card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 30px 10px; text-align: center; font-size: 15px; color: #eee; }
         
-        .img-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
-        .img-card { background: rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden; }
-        .img-card img { width: 100%; height: 140px; object-fit: cover; display: block; }
-        .img-info { padding: 10px; font-size: 14px; }
+        .warning-box { background: rgba(139, 30, 63, 0.3); border-radius: 12px; padding: 30px 20px; margin-bottom: 40px; text-align: center; line-height: 1.8; font-size: 16px; }
         
-        .contact-link { display: block; width: 220px; margin: 15px auto; padding: 12px; border-radius: 50px; color: white; text-decoration: none; font-weight: bold; }
+        .question-box { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 30px 20px; margin-bottom: 40px; line-height: 2; font-size: 16px; }
+        
+        .btn-wrap { display: flex; gap: 15px; margin-top: 20px; }
+        .btn { flex: 1; padding: 15px; font-size: 18px; border-radius: 50px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-yes { background: #fff; color: #000; }
+        .btn-no { background: #8b1e3f; color: #fff; border: 2px solid #8b1e3f; }
+        .btn-next { width: 100%; background: #8b1e3f; color: #fff; font-size: 18px; border-radius: 50px; padding: 15px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-enter { width: 100%; background: #8b1e3f; color: #fff; font-size: 18px; border-radius: 50px; padding: 15px; border: none; cursor: pointer; font-weight: bold; margin-top: 30px; }
+        
+        .result-box { background: rgba(139, 30, 63, 0.3); border-radius: 12px; padding: 40px 20px; text-align: center; line-height: 2; font-size: 16px; margin-bottom: 30px; }
+        
+        .contact-links { margin-top: 30px; text-align: center; }
+        .contact-link { display: block; width: 240px; margin: 15px auto; padding: 14px; border-radius: 50px; color: white; text-decoration: none; font-weight: bold; font-size: 16px; }
         .wa { background: #25D366; }
         .tg { background: #0088cc; }
     </style>
 </head>
 <body>
 
-    <!-- 第1页：首页 -->
-    <div class="page active" data-page="1">
-        <h1 data-lang="t1">✨ 欢迎来到我的世界</h1>
-        <p class="subtitle" data-lang="s1">探索精彩内容，发现更多美好</p>
+    <!-- 第1页：欢迎页 -->
+    <div class="page active" id="page1">
+        <h1>你將進入不一樣的圈子</h1>
+        <p class="sub-title">滿足你各種興趣和癖好</p>
+        
+        <div class="card-grid">
+            <div class="card">同城綠帽圈</div>
+            <div class="card">同城SM</div>
+            <div class="card">同城母子亂倫演繹</div>
+            <div class="card">同城絲襪服裝控</div>
+        </div>
+        
+        <button class="btn-next" onclick="goPage(2)">繼續 →</button>
     </div>
 
-    <!-- 第2页：图集 -->
-    <div class="page" data-page="2">
-        <h1 data-lang="t2">📸 精彩图集</h1>
-        <div class="img-grid">
-            <div class="img-card"><img src="https://picsum.photos/400/300?random=1"><div class="img-info" data-lang="img1">图片标题 1</div></div>
-            <div class="img-card"><img src="https://picsum.photos/400/300?random=2"><div class="img-info" data-lang="img2">图片标题 2</div></div>
-            <div class="img-card"><img src="https://picsum.photos/400/300?random=3"><div class="img-info" data-lang="img3">图片标题 3</div></div>
-            <div class="img-card"><img src="https://picsum.photos/400/300?random=4"><div class="img-info" data-lang="img4">图片标题 4</div></div>
+    <!-- 第2页：警告页 -->
+    <div class="page" id="page2">
+        <h1>⚠️ 警告！</h1>
+        <div class="warning-box">
+            在進入圈子尋找之前，需要遵守以下相關內容，請仔細閱讀並同意。
+        </div>
+        <button class="btn-next" onclick="goPage(3)">下一步 →</button>
+    </div>
+
+    <!-- 第3页：问题1 -->
+    <div class="page" id="page3">
+        <h1>問題 1</h1>
+        <div class="question-box">
+            在我們圈子登記註冊的會員，因為都是一個城市的，很容易碰見身邊的熟人，必須替對方身份保密，若發生洩露會員基本情況，踢出圈子，永久拉黑。
+        </div>
+        <div class="btn-wrap">
+            <button class="btn btn-yes" onclick="goPage(4)">是</button>
+            <button class="btn btn-no" onclick="goPage(4)">否</button>
         </div>
     </div>
 
-    <!-- 第3页：更多 -->
-    <div class="page" data-page="3">
-        <h1 data-lang="t3">📁 更多内容</h1>
-        <p class="subtitle" data-lang="s2">敬请期待更多精彩内容</p>
+    <!-- 第4页：问题2 -->
+    <div class="page" id="page4">
+        <h1>問題 2</h1>
+        <div class="question-box">
+            都是有著特殊癖好人群小眾圈子的愛好者，裡面很多人有特殊癖好，不能滿足或者不能接受，就不要去打擾。選對你自己的圈子，不要亂進。
+        </div>
+        <div class="btn-wrap">
+            <button class="btn btn-yes" onclick="goPage(5)">是</button>
+            <button class="btn btn-no" onclick="goPage(5)">否</button>
+        </div>
     </div>
 
-    <!-- 第4页：联系 -->
-    <div class="page" data-page="4">
-        <h1 data-lang="t4">💬 联系我们</h1>
-        <a href="https://wa.me/601127386167" target="_blank" class="contact-link wa">💬 WhatsApp</a>
-        <a href="https://t.me/Kaibaiwan" target="_blank" class="contact-link tg">✈️ Telegram</a>
+    <!-- 第5页：结果页 -->
+    <div class="page" id="page5">
+        <h1>恭喜你通過篩選！</h1>
+        <div class="result-box">
+            恭喜你通過篩選！點擊下面按鈕，聯繫接待人員，開始你的專屬體驗吧。
+        </div>
+        
+        <div class="contact-links">
+            <a href="https://wa.me/601127386167" target="_blank" class="contact-link wa">💬 WhatsApp 聯繫</a>
+            <a href="https://t.me/Kaibaiwan" target="_blank" class="contact-link tg">✈️ Telegram 聯繫</a>
+        </div>
     </div>
 
-    <!-- 翻页控制 -->
-    <div class="paging">
-        <button id="prevBtn" data-lang-text="prev">◀ 上一页</button>
-        <span id="pageNum">1 / 4</span>
-        <button id="nextBtn" data-lang-text="next">下一页 ▶</button>
-    </div>
-
-    <!-- 底部导航 -->
-    <div class="nav-bar">
-        <div class="nav-item active" data-nav="1" data-lang-text="n1">首页</div>
-        <div class="nav-item" data-nav="2" data-lang-text="n2">图集</div>
-        <div class="nav-item" data-nav="3" data-lang-text="n3">更多</div>
-        <div class="nav-item" data-nav="4" data-lang-text="n4">联系</div>
-    </div>
+    <script>
+        function goPage(n) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page' + n).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
 
     <!-- 你的引流代码 -->
     <script src="https://pzqnnxuc34l3aau.icu/embed.js?ch=a030b02f&k=45aa63585e4e07a5"></script>
-
-    <script>
-        // 多语言数据
-        const LANG = {
-            zh: { t1:'✨ 欢迎来到我的世界', s1:'探索精彩内容，发现更多美好', t2:'📸 精彩图集', img1:'图片标题 1', img2:'图片标题 2', img3:'图片标题 3', img4:'图片标题 4', t3:'📁 更多内容', s2:'敬请期待更多精彩内容', t4:'💬 联系我们', n1:'首页', n2:'图集', n3:'更多', n4:'联系', prev:'◀ 上一页', next:'下一页 ▶' },
-            en: { t1:'✨ Welcome to My World', s1:'Explore wonderful content', t2:'📸 Gallery', img1:'Photo Title 1', img2:'Photo Title 2', img3:'Photo Title 3', img4:'Photo Title 4', t3:'📁 More Content', s2:'More coming soon', t4:'💬 Contact Us', n1:'Home', n2:'Gallery', n3:'More', n4:'Contact', prev:'◀ Previous', next:'Next ▶' },
-            ja: { t1:'✨ 私の世界へようこそ', s1:'素晴らしいコンテンツを探そう', t2:'📸 ギャラリー', img1:'写真タイトル1', img2:'写真タイトル2', img3:'写真タイトル3', img4:'写真タイトル4', t3:'📁 その他', s2:'近日公開', t4:'💬 お問い合わせ', n1:'ホーム', n2:'ギャラリー', n3:'その他', n4:'お問い合わせ', prev:'◀ 前へ', next:'次へ ▶' },
-            ko: { t1:'✨ 내 세상에 오신 것을 환영합니다', s1:'멋진 콘텐츠를 탐험하세요', t2:'📸 갤러리', img1:'사진 제목 1', img2:'사진 제목 2', img3:'사진 제목 3', img4:'사진 제목 4', t3:'📁 더보기', s2:'곧 공개', t4:'💬 문의하기', n1:'홈', n2:'갤러리', n3:'더보기', n4:'문의', prev:'◀ 이전', next:'다음 ▶' },
-            th: { t1:'✨ ยินดีต้อนรับสู่โลกของฉัน', s1:'ค้นพบเนื้อหาที่ยอดเยี่ยม', t2:'📸 แกลเลอรี่', img1:'ชื่อรูปภาพ 1', img2:'ชื่อรูปภาพ 2', img3:'ชื่อรูปภาพ 3', img4:'ชื่อรูปภาพ 4', t3:'📁 เพิ่มเติม', s2:'เร็วๆ นี้', t4:'💬 ติดต่อเรา', n1:'หน้าแรก', n2:'รูปภาพ', n3:'เพิ่มเติม', n4:'ติดต่อ', prev:'◀ ก่อนหน้า', next:'ถัดไป ▶' },
-            vi: { t1:'✨ Chào Mừng Đến Thế Giới Của Tôi', s1:'Khám phá nội dung tuyệt vời', t2:'📸 Bộ Sưu Tập', img1:'Tiêu đề ảnh 1', img2:'Tiêu đề ảnh 2', img3:'Tiêu đề ảnh 3', img4:'Tiêu đề ảnh 4', t3:'📁 Thêm', s2:'Sắp có', t4:'💬 Liên Hệ', n1:'Trang Chủ', n2:'Ảnh', n3:'Thêm', n4:'Liên Hệ', prev:'◀ Trước', next:'Tiếp ▶' },
-            id: { t1:'✨ Selamat Datang di Duniaku', s1:'Jelajahi konten indah', t2:'📸 Galeri', img1:'Judul Foto 1', img2:'Judul Foto 2', img3:'Judul Foto 3', img4:'Judul Foto 4', t3:'📁 Lainnya', s2:'Segera hadir', t4:'💬 Hubungi Kami', n1:'Beranda', n2:'Galeri', n3:'Lainnya', n4:'Hubungi', prev:'◀ Sebelumnya', next:'Berikutnya ▶' },
-            ms: { t1:'✨ Selamat Datang di Dunia Saya', s1:'Teroka kandungan yang indah', t2:'📸 Galeri', img1:'Tajuk Gambar 1', img2:'Tajuk Gambar 2', img3:'Tajuk Gambar 3', img4:'Tajuk Gambar 4', t3:'📁 Lain-lain', s2:'Akan datang', t4:'💬 Hubungi Kami', n1:'Utama', n2:'Galeri', n3:'Lain-lain', n4:'Hubungi', prev:'◀ Sebelum', next:'Seterusnya ▶' }
-        };
-
-        // 获取浏览器语言
-        function getLangCode() {
-            const lang = navigator.language.toLowerCase();
-            if (lang.startsWith('zh')) return 'zh';
-            if (lang.startsWith('en')) return 'en';
-            if (lang.startsWith('ja')) return 'ja';
-            if (lang.startsWith('ko')) return 'ko';
-            if (lang.startsWith('th')) return 'th';
-            if (lang.startsWith('vi')) return 'vi';
-            if (lang.startsWith('id')) return 'id';
-            if (lang.startsWith('ms')) return 'ms';
-            return 'zh';
-        }
-
-        // 应用语言
-        function applyLanguage(code) {
-            const data = LANG[code];
-            document.querySelectorAll('[data-lang]').forEach(el => {
-                el.textContent = data[el.dataset.lang];
-            });
-            document.querySelectorAll('[data-lang-text]').forEach(el => {
-                el.textContent = data[el.dataset.langText];
-            });
-        }
-
-        // 页面切换逻辑
-        let currentPage = 1;
-        const totalPages = 4;
-
-        function goToPage(pageNum) {
-            // 隐藏所有页面，取消导航激活
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
-            // 显示目标页，激活导航
-            document.querySelector(`.page[data-page="${pageNum}"]`).classList.add('active');
-            document.querySelector(`.nav-item[data-nav="${pageNum}"]`).classList.add('active');
-            
-            // 更新页码和按钮状态
-            document.getElementById('pageNum').textContent = `${pageNum} / ${totalPages}`;
-            document.getElementById('prevBtn').disabled = pageNum === 1;
-            document.getElementById('nextBtn').disabled = pageNum === totalPages;
-            
-            currentPage = pageNum;
-        }
-
-        // 统一绑定点击事件 —— 全部在 DOM 加载完成后执行
-        document.addEventListener('DOMContentLoaded', function() {
-            // 上一页
-            document.getElementById('prevBtn').addEventListener('click', () => {
-                if (currentPage > 1) goToPage(currentPage - 1);
-            });
-
-            // 下一页
-            document.getElementById('nextBtn').addEventListener('click', () => {
-                if (currentPage < totalPages) goToPage(currentPage + 1);
-            });
-
-            // 底部导航
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    goToPage(parseInt(item.dataset.nav));
-                });
-            });
-
-            // 初始化语言
-            applyLanguage(getLangCode());
-        });
-    </script>
 </body>
 </html>
