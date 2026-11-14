@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binex - 登录</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#1E2026;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+    .header{padding:20px;text-align:center;border-bottom:1px solid #2B2F36;}
+    .logo{font-size:24px;font-weight:bold;color:#F3BA2F;}
+    .back{position:absolute;top:20px;left:20px;color:#888;text-decoration:none;}
+    .container{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+    .card{width:100%;max-width:400px;background:#2B2F36;border-radius:12px;padding:30px;}
+    .card h2{text-align:center;margin-bottom:30px;color:#F3BA2F;}
+    .tab{display:flex;margin-bottom:25px;border-bottom:1px solid #474D57;}
+    .tab-btn{flex:1;padding:12px;color:#888;text-align:center;cursor-pointer;border-bottom:2px solid transparent;}
+    .tab-btn.active{color:#F3BA2F;border-bottom-color:#F3BA2F;}
+    .form-group{margin-bottom:20px;}
+    label{display:block;margin-bottom:8px;color:#ccc;font-size:14px;}
+    input{width:100%;padding:12px;background:#1E2026;border:1px solid #474D57;border-radius:6px;color:#fff;font-size:15px;}
+    input:focus{outline:none;border-color:#F3BA2F;}
+    .code-row{display:flex;gap:10px;}
+    .code-row input{flex:1;}
+    .code-btn{padding:12px 15px;background:#474D57;border:none;border-radius:6px;color:#fff;white-space:nowrap;cursor-pointer;font-size:13px;}
+    .code-btn:disabled{opacity:0.6;cursor:not-allowed;}
+    .btn{width:100%;padding:14px;background:#F3BA2F;color:#000;font-size:16px;font-weight:bold;border:none;border-radius:6px;cursor:pointer;margin-top:10px;}
+    .btn:disabled{opacity:0.6;cursor:not-allowed;}
+    .link{text-align:center;margin-top:20px;color:#888;font-size:14px;}
+    .link a{color:#F3BA2F;text-decoration:none;}
+    .hidden{display:none !important;}
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back">← 返回</a>
+  <div class="header">
+    <div class="logo">BINEX</div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2>欢迎回来</h2>
+      
+      <div class="tab">
+        <div class="tab-btn active" data-tab="account">账号登录</div>
+        <div class="tab-btn" data-tab="email">邮箱登录</div>
+      </div>
+
+      <!-- 账号登录 -->
+      <form id="accountForm">
+        <div id="accountTab">
+          <div class="form-group">
+            <label>用户名/手机号</label>
+            <input type="text" id="account" placeholder="请输入账号">
+          </div>
+          <div class="form-group">
+            <label>密码</label>
+            <input type="password" id="password" placeholder="请输入密码">
+          </div>
+          <div class="form-group">
+            <label>验证码</label>
+            <div class="code-row">
+              <input type="text" id="accountCode" placeholder="6位数字" maxlength="6">
+              <button type="button" class="code-btn" id="sendAccountCode">发送验证码</button>
+            </div>
+          </div>
+          <button type="submit" class="btn">登录</button>
+        </div>
+      </form>
+
+      <!-- 邮箱登录 -->
+      <form id="emailForm" class="hidden">
+        <div id="emailTab">
+          <div class="form-group">
+            <label>邮箱地址</label>
+            <input type="email" id="email" placeholder="请输入邮箱">
+          </div>
+          <div class="form-group">
+            <label>验证码</label>
+            <div class="code-row">
+              <input type="text" id="emailCode" placeholder="6位数字" maxlength="6">
+              <button type="button" class="code-btn" id="sendEmailCode">发送验证码</button>
+            </div>
+          </div>
+          <button type="submit" class="btn">登录</button>
+        </div>
+      </form>
+
+      <div class="link">
+        还没有账号？<a href="register.html">立即注册</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 标签切换
+    document.querySelectorAll('.tab-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.tab;
+        if(tab==='account'){
+          document.getElementById('accountForm').classList.remove('hidden');
+          document.getElementById('emailForm').classList.add('hidden');
+        }else{
+          document.getElementById('accountForm').classList.add('hidden');
+          document.getElementById('emailForm').classList.remove('hidden');
+        }
+      });
+    });
+
+    // 模拟验证码倒计时
+    let countdown=60;
+    let timer=null;
+    function startCountdown(btn){
+      btn.disabled=true;
+      btn.textContent=`${countdown}秒后重发`;
+      timer=setInterval(()=>{
+        countdown--;
+        btn.textContent=`${countdown}秒后重发`;
+        if(countdown<=0){
+          clearInterval(timer);
+          btn.disabled=false;
+          btn.textContent="发送验证码";
+          countdown=60;
+        }
+      },1000);
+    }
+
+    // 发送验证码 - 账号登录
+    document.getElementById('sendAccountCode').addEventListener('click',()=>{
+      startCountdown(document.getElementById('sendAccountCode'));
+      alert('演示版：任意输入6位数字即可，如 123456');
+    });
+
+    // 发送验证码 - 邮箱登录
+    document.getElementById('sendEmailCode').addEventListener('click',()=>{
+      const email=document.getElementById('email').value;
+      if(!email){alert('请先输入邮箱地址');return;}
+      startCountdown(document.getElementById('sendEmailCode'));
+      alert('演示版：任意输入6位数字即可，如 123456');
+    });
+
+    // 账号登录提交
+    document.getElementById('accountForm').addEventListener('submit',async(e)=>{
+      e.preventDefault();
+      const account=document.getElementById('account').value.trim();
+      const password=document.getElementById('password').value;
+      const code=document.getElementById('accountCode').value.trim();
+      
+      if(!account||!password||!code){alert('请填写完整信息');return;}
+      if(code.length!==6){alert('请输入6位验证码');return;}
+      
+      // 模拟登录成功
+      localStorage.setItem('binex_user',JSON.stringify({account,loginTime:Date.now()}));
+      alert('登录成功！');
+      window.location.href='assets.html';
+    });
+
+    // 邮箱登录提交
+    document.getElementById('emailForm').addEventListener('submit',async(e)=>{
+      e.preventDefault();
+      const email=document.getElementById('email').value.trim();
+      const code=document.getElementById('emailCode').value.trim();
+      
+      if(!email||!code){alert('请填写完整信息');return;}
+      if(code.length!==6){alert('请输入6位验证码');return;}
+      
+      localStorage.setItem('binex_user',JSON.stringify({email,loginTime:Date.now()}));
+      alert('登录成功！');
+      window.location.href='assets.html';
+    });
+  </script>
+</body>
+</html>

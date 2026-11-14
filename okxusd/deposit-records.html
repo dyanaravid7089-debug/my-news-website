@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binex - 充值记录</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#1E2026;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:80px;}
+    .header{padding:20px;text-align:center;border-bottom:1px solid #2B2F36;position:relative;}
+    .back{position:absolute;top:20px;left:20px;color:#888;text-decoration:none;}
+    .logo{font-size:18px;font-weight:bold;color:#F3BA2F;}
+    .container{max-width:480px;margin:0 auto;padding:20px;}
+    .record-list{background:#2B2F36;border-radius:10px;overflow:hidden;border:1px solid #474D57;}
+    .record-item{padding:15px;border-bottom:1px solid #474D57;}
+    .record-item:last-child{border-bottom:none;}
+    .record-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+    .coin-name{font-weight:bold;font-size:16px;}
+    .status{font-size:12px;padding:2px 8px;border-radius:10px;background:#474D57;color:#ccc;}
+    .status.pending{background:#3a3418;color:#F3BA2F;}
+    .status.success{background:#183a2c;color:#089981;}
+    .status.fail{background:#3a1818;color:#F23645;}
+    .record-detail{font-size:13px;color:#888;line-height:1.8;word-break:break-all;}
+    .empty{text-align:center;padding:60px 20px;color:#666;}
+    .tips{font-size:12px;color:#888;text-align:center;margin-top:15px;}
+  </style>
+</head>
+<body>
+  <a href="deposit.html" class="back">← 返回</a>
+  <div class="header">
+    <div class="logo">BINEX · 充值记录</div>
+  </div>
+
+  <div class="container">
+    <div class="record-list" id="recordList">
+      <div class="empty">暂无充值记录</div>
+    </div>
+    <div class="tips">充值记录仅显示您在本站生成的充值地址</div>
+  </div>
+
+  <script>
+    function loadRecords() {
+      const records = JSON.parse(localStorage.getItem('binex_deposit_records') || '[]');
+      const list = document.getElementById('recordList');
+      
+      if (records.length === 0) {
+        list.innerHTML = '<div class="empty">暂无充值记录</div>';
+        return;
+      }
+      
+      list.innerHTML = records.map(r => `
+        <div class="record-item">
+          <div class="record-top">
+            <span class="coin-name">${r.coin}</span>
+            <span class="status pending">${r.status}</span>
+          </div>
+          <div class="record-detail">
+            网络：${r.network}<br>
+            地址：${r.address}<br>
+            时间：${r.time}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    document.addEventListener('DOMContentLoaded', loadRecords);
+  </script>
+</body>
+</html>

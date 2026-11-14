@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binex - 提现</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#1E2026;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:80px;}
+    .header{padding:20px;text-align:center;border-bottom:1px solid #2B2F36;position:relative;}
+    .back{position:absolute;top:20px;left:20px;color:#888;text-decoration:none;}
+    .logo{font-size:18px;font-weight:bold;color:#F3BA2F;}
+    .container{max-width:480px;margin:0 auto;padding:20px;}
+    .card{background:#2B2F36;border-radius:12px;padding:25px;border:1px solid #474D57;}
+    .card h2{text-align:center;margin-bottom:25px;color:#F3BA2F;font-size:20px;}
+    .balance-info{background:#1E2026;border-radius:6px;padding:12px;margin-bottom:20px;}
+    .balance-label{font-size:13px;color:#888;margin-bottom:5px;}
+    .balance-value{font-size:18px;font-weight:bold;}
+    .form-group{margin-bottom:18px;}
+    label{display:block;margin-bottom:8px;color:#ccc;font-size:14px;}
+    select, input{width:100%;padding:12px;background:#1E2026;border:1px solid #474D57;border-radius:6px;color:#fff;font-size:15px;}
+    select:focus, input:focus{outline:none;border-color:#F3BA2F;}
+    .tips{font-size:12px;color:#888;line-height:1.6;margin-top:8px;}
+    .tips strong{color:#F3BA2F;}
+    .btn{width:100%;padding:14px;background:#F3BA2F;color:#000;font-size:16px;font-weight:bold;border:none;border-radius:8px;cursor:pointer;margin-top:10px;}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;}
+    .record-link{text-align:center;margin-top:20px;}
+    .record-link a{color:#F3BA2F;text-decoration:none;font-size:14px;}
+    .hidden{display:none !important;}
+    .code-row{display:flex;gap:10px;}
+    .code-row input{flex:1;}
+    .code-btn{padding:12px 10px;background:#474D57;border:none;border-radius:6px;color:#fff;white-space:nowrap;cursor:pointer;font-size:13px;}
+    .code-btn:disabled{opacity:0.6;cursor:not-allowed;}
+  </style>
+</head>
+<body>
+  <a href="assets.html" class="back">← 返回</a>
+  <div class="header">
+    <div class="logo">BINEX · 提现</div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2>数字资产提现</h2>
+      
+      <div class="balance-info">
+        <div class="balance-label">可用余额</div>
+        <div class="balance-value" id="availableBalance">0.00 USDT</div>
+      </div>
+
+      <div class="form-group">
+        <label>选择币种</label>
+        <select id="coinSelect">
+          <option value="">请选择币种</option>
+          <option value="USDT">USDT - 泰达币</option>
+          <option value="BTC">BTC - 比特币</option>
+          <option value="ETH">ETH - 以太坊</option>
+          <option value="SOL">SOL - Solana</option>
+          <option value="BNB">BNB - BNB</option>
+          <option value="XRP">XRP - 瑞波币</option>
+        </select>
+      </div>
+
+      <div class="form-group hidden" id="networkGroup">
+        <label>选择网络</label>
+        <select id="networkSelect">
+          <option value="">请选择网络</option>
+        </select>
+      </div>
+
+      <div class="form-group hidden" id="addressGroup">
+        <label>接收地址</label>
+        <input type="text" id="toAddress" placeholder="请输入您的提现地址">
+      </div>
+
+      <div class="form-group hidden" id="amountGroup">
+        <label>提现数量</label>
+        <input type="number" id="amount" placeholder="最小：<span id="minWithdraw">0.00</span>" step="0.0001">
+        <div class="tips">
+          手续费：<strong id="fee">0.00</strong><br>
+          实际到账：<strong id="receiveAmount">0.00</strong>
+        </div>
+      </div>
+
+      <div class="form-group hidden" id="codeGroup">
+        <label>验证码</label>
+        <div class="code-row">
+          <input type="text" id="code" placeholder="6位数字" maxlength="6">
+          <button type="button" class="code-btn" id="sendCode">发送验证码</button>
+        </div>
+      </div>
+
+      <button class="btn hidden" id="submitBtn">确认提现</button>
+      
+      <div class="record-link">
+        <a href="withdraw-records.html">查看提现记录 →</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 提现配置
+    const withdrawConfig = {
+      USDT: {
+        networks: [
+          {id:'trc20', name:'TRC20 (波场)', fee:1.00, min:10.00},
+          {id:'erc20', name:'ERC20 (以太坊)', fee:25.00, min:50.00},
+          {id:'bsc', name:'BSC (币安链)', fee:3.00, min:20.00}
+        ]
+      },
+      BTC: {
+        networks: [
+          {id:'btc', name:'BTC 主网', fee:0.0005, min:0.001}
+        ]
+      },
+      ETH: {
+        networks: [
+          {id:'erc20', name:'ERC20 (以太坊)', fee:0.005, min:0.01}
+        ]
+      },
+      SOL: {
+        networks: [
+          {id:'sol', name:'Solana', fee:0.01, min:0.5}
+        ]
+      },
+      BNB: {
+        networks: [
+          {id:'bsc', name:'BSC (币安链)', fee:0.001, min:0.01}
+        ]
+      },
+      XRP: {
+        networks: [
+          {id:'xrp', name:'XRP 主网', fee:0.25, min:10.00}
+        ]
+      }
+    };
+
+    const coinSelect = document.getElementById('coinSelect');
+    const networkGroup = document.getElementById('networkGroup');
+    const networkSelect = document.getElementById('networkSelect');
+    const addressGroup = document.getElementById('addressGroup');
+    const addressInput = document.getElementById('toAddress');
+    const amountGroup = document.getElementById('amountGroup');
+    const amountInput = document.getElementById('amount');
+    const feeEl = document.getElementById('fee');
+    const receiveEl = document.getElementById('receiveAmount');
+    const minWithdrawEl = document.getElementById('minWithdraw');
+    const codeGroup = document.getElementById('codeGroup');
+    const codeInput = document.getElementById('code');
+    const sendCodeBtn = document.getElementById('sendCode');
+    const submitBtn = document.getElementById('submitBtn');
+    const balanceEl = document.getElementById('availableBalance');
+
+    let selectedCoin = null;
+    let selectedNetwork = null;
+    let userBalance = 0;
+
+    // 获取用户余额
+    function loadBalance() {
+      const balances = JSON.parse(localStorage.getItem('binex_balances') || '{}');
+      userBalance = balances.USDT || 0;
+      balanceEl.textContent = `${userBalance.toFixed(2)} USDT`;
+    }
+
+    // 选择币种
+    coinSelect.addEventListener('change', () => {
+      const coin = coinSelect.value;
+      if (!coin) {
+        resetView();
+        return;
+      }
+      
+      selectedCoin = coin;
+      const data = withdrawConfig[coin];
+      networkSelect.innerHTML = '<option value="">请选择网络</option>';
+      data.networks.forEach(n=>{
+        const opt = document.createElement('option');
+        opt.value = n.id;
+        opt.textContent = n.name;
+        opt.dataset.fee = n.fee;
+        opt.dataset.min = n.min;
+        networkSelect.appendChild(opt);
+      });
+      
+      networkGroup.classList.remove('hidden');
+      hideStepsFrom('network');
+    });
+
+    // 选择网络
+    networkSelect.addEventListener('change', () => {
+      const opt = networkSelect.selectedOptions[0];
+      if (!opt.value) {
+        hideStepsFrom('network');
+        return;
+      }
+      
+      selectedNetwork = {
+        id: opt.value,
+        name: opt.textContent,
+        fee: parseFloat(opt.dataset.fee),
+        min: parseFloat(opt.dataset.min)
+      };
+      
+      minWithdrawEl.textContent = selectedNetwork.min;
+      feeEl.textContent = `${selectedNetwork.fee} ${selectedCoin}`;
+      
+      addressGroup.classList.remove('hidden');
+      amountGroup.classList.remove('hidden');
+      codeGroup.classList.add('hidden');
+      submitBtn.classList.add('hidden');
+      
+      updateReceive();
+    });
+
+    // 输入金额更新到账金额
+    amountInput.addEventListener('input', updateReceive);
+    
+    function updateReceive() {
+      const amt = parseFloat(amountInput.value) || 0;
+      const receive = Math.max(0, amt - selectedNetwork.fee);
+      receiveEl.textContent = `${receive.toFixed(4)} ${selectedCoin}`;
+      
+      if (amt >= selectedNetwork.min) {
+        codeGroup.classList.remove('hidden');
+      } else {
+        codeGroup.classList.add('hidden');
+        submitBtn.classList.add('hidden');
+      }
+    }
+
+    // 发送验证码
+    let countdown = 60;
+    let timer = null;
+    sendCodeBtn.addEventListener('click', () => {
+      if (!addressInput.value) {alert('请先输入接收地址');return;}
+      if (!amountInput.value || parseFloat(amountInput.value) < selectedNetwork.min) {alert('请输入正确的提现金额');return;}
+      
+      sendCodeBtn.disabled = true;
+      countdown = 60;
+      sendCodeBtn.textContent = `${countdown}秒`;
+      timer = setInterval(() => {
+        countdown--;
+        sendCodeBtn.textContent = `${countdown}秒`;
+        if (countdown <= 0) {
+          clearInterval(timer);
+          sendCodeBtn.disabled = false;
+          sendCodeBtn.textContent = '发送验证码';
+        }
+      }, 1000);
+      
+      alert('演示版：验证码 123456');
+      submitBtn.classList.remove('hidden');
+    });
+
+    // 提交提现
+    submitBtn.addEventListener('click', () => {
+      const code = codeInput.value.trim();
+      const amount = parseFloat(amountInput.value);
+      const address = addressInput.value.trim();
+      
+      if (code !== '123456') {alert('验证码错误');return;}
+      if (amount < selectedNetwork.min) {alert(`最小提现金额：${selectedNetwork.min}`);return;}
+      
+      // 记录提现
+      const record = {
+        id: Date.now(),
+        coin: selectedCoin,
+        network: selectedNetwork.name,
+        amount: amount,
+        fee: selectedNetwork.fee,
+        receive: amount - selectedNetwork.fee,
+        address: address,
+        time: new Date().toLocaleString('zh-CN'),
+        status: '审核中'
+      };
+      
+      const records = JSON.parse(localStorage.getItem('binex_withdraw_records') || '[]');
+      records.unshift(record);
+      localStorage.setItem('binex_withdraw_records', JSON.stringify(records));
+      
+      alert('提现申请已提交！\n审核中，预计10-30分钟到账');
+      window.location.href = 'withdraw-records.html';
+    });
+
+    function hideStepsFrom(step) {
+      addressGroup.classList.add('hidden');
+      amountGroup.classList.add('hidden');
+      codeGroup.classList.add('hidden');
+      submitBtn.classList.add('hidden');
+      selectedNetwork = null;
+    }
+
+    function resetView() {
+      networkGroup.classList.add('hidden');
+      hideStepsFrom('coin');
+      selectedCoin = null;
+    }
+
+    document.addEventListener('DOMContentLoaded', loadBalance);
+  </script>
+</body>
+</html>

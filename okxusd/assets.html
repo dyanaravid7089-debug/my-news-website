@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binex - 资产</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#1E2026;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:80px;}
+    .header{padding:20px;text-align:center;border-bottom:1px solid #2B2F36;}
+    .logo{font-size:20px;font-weight:bold;color:#F3BA2F;}
+    .container{max-width:480px;margin:0 auto;padding:20px;}
+    .balance-card{background:linear-gradient(135deg,#2B2F36,#1E2026);border-radius:12px;padding:25px;margin-bottom:20px;border:1px solid #474D57;}
+    .balance-label{font-size:14px;color:#888;margin-bottom:8px;}
+    .balance-value{font-size:32px;font-weight:bold;color:#F3BA2F;}
+    .balance-unit{font-size:16px;color:#888;margin-left:6px;}
+    .balance-change{font-size:13px;color:#089981;margin-top:5px;}
+    .btn-row{display:flex;gap:12px;margin:20px 0;}
+    .btn{flex:1;padding:12px;background:#F3BA2F;color:#000;font-weight:bold;border:none;border-radius:8px;cursor-pointer;text-align:center;text-decoration:none;font-size:15px;}
+    .btn-outline{background:transparent;border:1px solid #F3BA2F;color:#F3BA2F;}
+    .section-title{font-size:16px;margin:25px 0 15px;color:#ccc;display:flex;justify-content:space-between;align-items:center;}
+    .section-title a{color:#F3BA2F;text-decoration:none;font-size:13px;}
+    .coin-list{background:#2B2F36;border-radius:10px;overflow:hidden;border:1px solid #474D57;}
+    .coin-item{display:flex;align-items:center;justify-content:space-between;padding:15px;border-bottom:1px solid #474D57;}
+    .coin-item:last-child{border-bottom:none;}
+    .coin-left{display:flex;align-items:center;gap:12px;}
+    .coin-icon{width:36px;height:36px;border-radius:50%;background:#474D57;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#F3BA2F;font-size:14px;}
+    .coin-name{font-weight:bold;}
+    .coin-desc{font-size:12px;color:#666;margin-top:2px;}
+    .coin-right{text-align:right;}
+    .coin-balance{font-weight:bold;}
+    .coin-value{font-size:12px;color:#888;margin-top:2px;}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#2B2F36;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #474D57;}
+    .nav-item{display:flex;flex-direction:column;align-items:center;color:#888;font-size:12px;text-decoration:none;}
+    .nav-item.active{color:#F3BA2F;}
+    .nav-item svg{width:24px;height:24px;margin-bottom:4px;}
+    .empty{text-align:center;padding:40px 20px;color:#666;}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">BINEX 资产</div>
+  </div>
+
+  <div class="container">
+    <!-- 总资产卡片 -->
+    <div class="balance-card">
+      <div class="balance-label">总资产（折算）</div>
+      <div class="balance-value" id="totalBalance">
+        0.00<span class="balance-unit">USDT</span>
+      </div>
+      <div class="balance-change">≈ 0.00 USD</div>
+      
+      <div class="btn-row">
+        <a href="deposit.html" class="btn">充值</a>
+        <a href="withdraw.html" class="btn btn-outline">提现</a>
+      </div>
+    </div>
+
+    <!-- 币种资产列表 -->
+    <div class="section-title">
+      <span>币种资产</span>
+    </div>
+    
+    <div class="coin-list" id="coinList">
+      <div class="empty">暂无资产，请先充值</div>
+    </div>
+  </div>
+
+  <!-- 底部导航 -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>首页</span>
+    </a>
+    <a href="contract.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
+      <span>合约</span>
+    </a>
+    <a href="trade.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+      <span>切换</span>
+    </a>
+    <a href="options.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+      <span>期权</span>
+    </a>
+    <a href="assets.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      <span>资产</span>
+    </a>
+  </nav>
+
+  <script>
+    // 币种配置
+    const coinConfig = {
+      USDT: { name: 'Tether', icon: 'U', price: 1 },
+      BTC: { name: 'Bitcoin', icon: 'B', price: 68500 },
+      ETH: { name: 'Ethereum', icon: 'E', price: 2450 },
+      SOL: { name: 'Solana', icon: 'S', price: 145 },
+      BNB: { name: 'BNB', icon: 'BN', price: 580 },
+      XRP: { name: 'Ripple', icon: 'X', price: 0.52 }
+    };
+
+    // 获取用户资产
+    function getUserBalances() {
+      const saved = localStorage.getItem('binex_balances');
+      return saved ? JSON.parse(saved) : {};
+    }
+
+    // 渲染资产列表
+    function renderAssets() {
+      const balances = getUserBalances();
+      const coinList = document.getElementById('coinList');
+      const totalEl = document.getElementById('totalBalance');
+      let totalValue = 0;
+      let hasData = false;
+
+      let html = '';
+      for (const [symbol, balance] of Object.entries(balances)) {
+        if (balance > 0) {
+          hasData = true;
+          const info = coinConfig[symbol] || { name: symbol, icon: symbol[0], price: 1 };
+          const value = balance * info.price;
+          totalValue += value;
+          
+          html += `
+            <div class="coin-item">
+              <div class="coin-left">
+                <div class="coin-icon">${info.icon}</div>
+                <div>
+                  <div class="coin-name">${symbol}</div>
+                  <div class="coin-desc">${info.name}</div>
+                </div>
+              </div>
+              <div class="coin-right">
+                <div class="coin-balance">${balance.toFixed(4)}</div>
+                <div class="coin-value">≈ ${value.toFixed(2)} USDT</div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      if (!hasData) {
+        html = '<div class="empty">暂无资产，请先充值</div>';
+      }
+
+      coinList.innerHTML = html;
+      totalEl.innerHTML = `${totalValue.toFixed(2)}<span class="balance-unit">USDT</span>`;
+    }
+
+    // 页面加载
+    document.addEventListener('DOMContentLoaded', renderAssets);
+  </script>
+</body>
+</html>

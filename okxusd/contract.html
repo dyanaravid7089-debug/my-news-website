@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binex - 合约</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#1E2026;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:80px;}
+    .header{padding:15px 20px;text-align:center;border-bottom:1px solid #2B2F36;position:relative;}
+    .logo{font-size:20px;font-weight:bold;color:#F3BA2F;}
+    .container{max-width:480px;margin:0 auto;padding:15px;}
+    .search-box{margin-bottom:15px;}
+    .search-box input{width:100%;padding:12px 15px;background:#2B2F36;border:1px solid #474D57;border-radius:8px;color:#fff;font-size:15px;}
+    .search-box input:focus{outline:none;border-color:#F3BA2F;}
+    .coin-list{background:#2B2F36;border-radius:10px;overflow:hidden;border:1px solid #474D57;}
+    .coin-header{display:flex;padding:12px 15px;background:#1E2026;color:#888;font-size:12px;border-bottom:1px solid #474D57;}
+    .coin-header>div{text-align:center;}
+    .coin-header .col-name{width:35%;text-align:left;}
+    .coin-header .col-price{width:25%;}
+    .coin-header .col-change{width:20%;}
+    .coin-header .col-volume{width:20%;}
+    .coin-item{display:flex;padding:14px 15px;border-bottom:1px solid #474D57;cursor:pointer;}
+    .coin-item:last-child{border-bottom:none;}
+    .coin-item:hover{background:#32363e;}
+    .coin-item>div{display:flex;align-items:center;}
+    .col-name{width:35%;}
+    .coin-icon{width:32px;height:32px;border-radius:50%;background:#474D57;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#F3BA2F;font-size:13px;margin-right:10px;}
+    .coin-info{}
+    .coin-symbol{font-weight:bold;font-size:14px;}
+    .coin-desc{font-size:11px;color:#666;margin-top:2px;}
+    .col-price{width:25%;text-align:center;justify-content:center;font-size:14px;}
+    .col-change{width:20%;text-align:center;justify-content:center;font-size:14px;font-weight:bold;}
+    .change-up{color:#089981;}
+    .change-down{color:#F23645;}
+    .col-volume{width:20%;text-align:right;justify-content:right;font-size:12px;color:#888;}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#2B2F36;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #474D57;}
+    .nav-item{display:flex;flex-direction:column;align-items:center;color:#888;font-size:12px;text-decoration:none;}
+    .nav-item.active{color:#F3BA2F;}
+    .nav-item svg{width:24px;height:24px;margin-bottom:4px;}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">BINEX · 合约</div>
+  </div>
+
+  <div class="container">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="搜索交易对...">
+    </div>
+
+    <div class="coin-list">
+      <div class="coin-header">
+        <div class="col-name">交易对</div>
+        <div class="col-price">最新价</div>
+        <div class="col-change">24h涨跌</div>
+        <div class="col-volume">24h量</div>
+      </div>
+      <div id="coinListBody"></div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>首页</span>
+    </a>
+    <a href="contract.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
+      <span>合约</span>
+    </a>
+    <a href="trade.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+      <span>切换</span>
+    </a>
+    <a href="options.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+      <span>期权</span>
+    </a>
+    <a href="assets.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      <span>资产</span>
+    </a>
+  </nav>
+
+  <script>
+    // 币种数据
+    const coinData = [
+      {symbol:'BTC/USDT', name:'比特币', price:'68,523.45', change:'+2.34%', volume:'28.5亿', icon:'B'},
+      {symbol:'ETH/USDT', name:'以太坊', price:'2,456.78', change:'-0.89%', volume:'15.2亿', icon:'E'},
+      {symbol:'SOL/USDT', name:'Solana', price:'145.32', change:'+5.67%', volume:'8.9亿', icon:'S'},
+      {symbol:'BNB/USDT', name:'BNB', price:'580.25', change:'+0.45%', volume:'3.2亿', icon:'BN'},
+      {symbol:'XRP/USDT', name:'瑞波币', price:'0.5234', change:'-1.23%', volume:'4.5亿', icon:'X'},
+      {symbol:'ADA/USDT', name:'艾达币', price:'0.4521', change:'+1.08%', volume:'2.1亿', icon:'A'},
+      {symbol:'DOGE/USDT', name:'狗狗币', price:'0.1234', change:'+3.45%', volume:'6.8亿', icon:'D'},
+      {symbol:'AVAX/USDT', name:'Avalanche', price:'35.67', change:'-0.56%', volume:'1.8亿', icon:'AV'},
+      {symbol:'DOT/USDT', name:'波卡', price:'7.89', change:'+1.56%', volume:'1.5亿', icon:'D'},
+      {symbol:'MATIC/USDT', name:'Polygon', price:'0.8765', change:'+4.32%', volume:'2.3亿', icon:'M'},
+      {symbol:'LINK/USDT', name:'Chainlink', price:'14.56', change:'-0.78%', volume:'1.2亿', icon:'L'},
+      {symbol:'UNI/USDT', name:'Uniswap', price:'7.23', change:'+2.11%', volume:'0.9亿', icon:'U'},
+      {symbol:'ATOM/USDT', name:'Cosmos', price:'9.45', change:'+0.34%', volume:'0.8亿', icon:'AT'},
+      {symbol:'LTC/USDT', name:'莱特币', price:'82.34', change:'-1.45%', volume:'1.1亿', icon:'L'},
+      {symbol:'BCH/USDT', name:'比特币现金', price:'456.78', change:'+0.98%', volume:'0.7亿', icon:'BC'},
+      {symbol:'ETC/USDT', name:'以太经典', price:'23.45', change:'+2.67%', volume:'0.6亿', icon:'ET'},
+      {symbol:'FIL/USDT', name:'Filecoin', price:'4.56', change:'-2.34%', volume:'0.5亿', icon:'F'},
+      {symbol:'TRX/USDT', name:'波场', price:'0.0987', change:'+0.56%', volume:'1.4亿', icon:'T'},
+      {symbol:'NEAR/USDT', name:'NEAR', price:'3.21', change:'+6.78%', volume:'0.8亿', icon:'N'},
+      {symbol:'FTM/USDT', name:'Fantom', price:'0.4321', change:'+8.90%', volume:'0.7亿', icon:'F'},
+      {symbol:'SUI/USDT', name:'Sui', price:'1.34', change:'+3.21%', volume:'1.5亿', icon:'SU'},
+      {symbol:'ARB/USDT', name:'Arbitrum', price:'0.8901', change:'+1.45%', volume:'1.1亿', icon:'AR'},
+      {symbol:'OP/USDT', name:'Optimism', price:'1.56', change:'-0.34%', volume:'0.6亿', icon:'OP'},
+      {symbol:'STRK/USDT', name:'Starknet', price:'0.9876', change:'+2.34%', volume:'0.4亿', icon:'ST'},
+      {symbol:'TIA/USDT', name:'Celestia', price:'12.34', change:'+5.67%', volume:'0.9亿', icon:'TI'},
+      {symbol:'SEI/USDT', name:'Sei', price:'0.7654', change:'+4.32%', volume:'0.5亿', icon:'SE'},
+      {symbol:'MEME/USDT', name:'Memecoin', price:'0.0012', change:'+12.34%', volume:'0.3亿', icon:'ME'},
+      {symbol:'BLUR/USDT', name:'Blur', price:'0.6543', change:'-1.23%', volume:'0.4亿', icon:'BL'},
+      {symbol:'RDNT/USDT', name:'Radiant', price:'0.3456', change:'+1.89%', volume:'0.2亿', icon:'RD'},
+      {symbol:'LDO/USDT', name:'Lido', price:'2.45', change:'-0.67%', volume:'0.5亿', icon:'LD'},
+      {symbol:'APE/USDT', name:'ApeCoin', price:'1.45', change:'+2.34%', volume:'0.3亿', icon:'AP'},
+      {symbol:'GALA/USDT', name:'GALA', price:'0.0234', change:'+5.43%', volume:'0.4亿', icon:'GA'},
+      {symbol:'MANA/USDT', name:'Decentraland', price:'0.4567', change:'-0.89%', volume:'0.2亿', icon:'MA'},
+      {symbol:'SAND/USDT', name:'The Sandbox', price:'0.3456', change:'+1.12%', volume:'0.3亿', icon:'SA'},
+      {symbol:'AXS/USDT', name:'Axie', price:'6.78', change:'-2.34%', volume:'0.4亿', icon:'AX'},
+      {symbol:'GMT/USDT', name:'STEPN', price:'0.2345', change:'+3.45%', volume:'0.3亿', icon:'GM'},
+      {symbol:'CHZ/USDT', name:'Chiliz', price:'0.0765', change:'+0.78%', volume:'0.2亿', icon:'CH'},
+      {symbol:'FLOW/USDT', name:'Flow', price:'0.9876', change:'-1.56%', volume:'0.2亿', icon:'FL'},
+      {symbol:'ICP/USDT', name:'Internet Computer', price:'12.34', change:'+0.45%', volume:'0.3亿', icon:'IC'},
+      {symbol:'XTZ/USDT', name:'Tezos', price:'0.9876', change:'+0.23%', volume:'0.1亿', icon:'XT'},
+      {symbol:'EOS/USDT', name:'EOS', price:'0.7654', change:'-0.45%', volume:'0.3亿', icon:'EO'},
+      {symbol:'XLM/USDT', name:'恒星币', price:'0.1123', change:'+0.89%', volume:'0.2亿', icon:'XL'},
+      {symbol:'ALGO/USDT', name:'Algorand', price:'0.1567', change:'-0.34%', volume:'0.1亿', icon:'AL'},
+      {symbol:'KAVA/USDT', name:'Kava', price:'0.6789', change:'+1.23%', volume:'0.1亿', icon:'KA'},
+      {symbol:'COMP/USDT', name:'Compound', price:'45.67', change:'-0.89%', volume:'0.2亿', icon:'CO'},
+      {symbol:'AAVE/USDT', name:'Aave', price:'98.76', change:'+0.67%', volume:'0.3亿', icon:'AA'},
+      {symbol:'MKR/USDT', name:'Maker', price:'3,456.78', change:'-1.23%', volume:'0.2亿', icon:'MK'},
+      {symbol:'SNX/USDT', name:'Synthetix', price:'2.34', change:'+1.56%', volume:'0.2亿', icon:'SN'},
+      {symbol:'GRT/USDT', name:'The Graph', price:'0.1234', change:'+0.45%', volume:'0.2亿', icon:'GR'},
+      {symbol:'BAT/USDT', name:'BAT', price:'0.2345', change:'-0.67%', volume:'0.1亿', icon:'BA'},
+      {symbol:'ZRX/USDT', name:'0x', price:'0.3456', change:'+0.78%', volume:'0.1亿', icon:'ZR'},
+      {symbol:'1INCH/USDT', name:'1inch', price:'0.4567', change:'-0.34%', volume:'0.1亿', icon:'1I'},
+      {symbol:'ENJ/USDT', name:'Enjin', price:'0.2345', change:'+0.56%', volume:'0.1亿', icon:'EN'},
+      {symbol:'OMG/USDT', name:'OMG', price:'0.4567', change:'-0.78%', volume:'0.1亿', icon:'OM'},
+      {symbol:'ZIL/USDT', name:'Zilliqa', price:'0.0234', change:'+0.34%', volume:'0.1亿', icon:'ZI'},
+      {symbol:'ONT/USDT', name:'本体', price:'0.1567', change:'-0.23%', volume:'0.1亿', icon:'ON'},
+      {symbol:'NEO/USDT', name:'小蚁', price:'12.34', change:'+0.56%', volume:'0.1亿', icon:'NE'},
+      {symbol:'QTUM/USDT', name:'量子链', price:'2.34', change:'-0.45%', volume:'0.1亿', icon:'QU'},
+      {symbol:'IOST/USDT', name:'IOST', price:'0.0078', change:'+0.12%', volume:'0.1亿', icon:'IO'},
+      {symbol:'WAVES/USDT', name:'Waves', price:'1.23', change:'+0.67%', volume:'0.1亿', icon:'WA'},
+      {symbol:'DASH/USDT', name:'达世币', price:'34.56', change:'-0.89%', volume:'0.1亿', icon:'DA'},
+      {symbol:'ZEC/USDT', name:'大零币', price:'45.67', change:'+0.34%', volume:'0.1亿', icon:'ZE'},
+      {symbol:'XMR/USDT', name:'门罗币', price:'145.67', change:'-1.23%', volume:'0.1亿', icon:'XM'},
+      {symbol:'KSM/USDT', name:'Kusama', price:'234.56', change:'+0.78%', volume:'0.1亿', icon:'KS'},
+      {symbol:'DOT/USDT', name:'波卡', price:'7.89', change:'+1.56%', volume:'1.5亿', icon:'D'},
+      {symbol:'SOL/USDT', name:'Solana', price:'145.32', change:'+5.67%', volume:'8.9亿', icon:'S'},
+      {symbol:'DOGE/USDT', name:'狗狗币', price:'0.1234', change:'+3.45%', volume:'6.8亿', icon:'D'},
+      {symbol:'AVAX/USDT', name:'Avalanche', price:'35.67', change:'-0.56%', volume:'1.8亿', icon:'AV'},
+      {symbol:'MATIC/USDT', name:'Polygon', price:'0.8765', change:'+4.32%', volume:'2.3亿', icon:'M'},
+      {symbol:'LINK/USDT', name:'Chainlink', price:'14.56', change:'-0.78%', volume:'1.2亿', icon:'L'},
+      {symbol:'UNI/USDT', name:'Uniswap', price:'7.23', change:'+2.11%', volume:'0.9亿', icon:'U'},
+      {symbol:'ATOM/USDT', name:'Cosmos', price:'9.45', change:'+0.34%', volume:'0.8亿', icon:'AT'},
+      {symbol:'LTC/USDT', name:'莱特币', price:'82.34', change:'-1.45%', volume:'1.1亿', icon:'L'},
+      {symbol:'BCH/USDT', name:'比特币现金', price:'456.78', change:'+0.98%', volume:'0.7亿', icon:'BC'},
+      {symbol:'ETC/USDT', name:'以太经典', price:'23.45', change:'+2.67%', volume:'0.6亿', icon:'ET'},
+      {symbol:'FIL/USDT', name:'Filecoin', price:'4.56', change:'-2.34%', volume:'0.5亿', icon:'F'},
+      {symbol:'TRX/USDT', name:'波场', price:'0.0987', change:'+0.56%', volume:'1.4亿', icon:'T'},
+      {symbol:'NEAR/USDT', name:'NEAR', price:'3.21', change:'+6.78%', volume:'0.8亿', icon:'N'},
+      {symbol:'FTM/USDT', name:'Fantom', price:'0.4321', change:'+8.90%', volume:'0.7亿', icon:'F'},
+      {symbol:'SUI/USDT', name:'Sui', price:'1.34', change:'+3.21%', volume:'1.5亿', icon:'SU'},
+      {symbol:'ARB/USDT', name:'Arbitrum', price:'0.8901', change:'+1.45%', volume:'1.1亿', icon:'AR'},
+      {symbol:'OP/USDT', name:'Optimism', price:'1.56', change:'-0.34%', volume:'0.6亿', icon:'OP'},
+      {symbol:'STRK/USDT', name:'Starknet', price:'0.9876', change:'+2.34%', volume:'0.4亿', icon:'ST'},
+      {symbol:'TIA/USDT', name:'Celestia', price:'12.34', change:'+5.67%', volume:'0.9亿', icon:'TI'},
+      {symbol:'SEI/USDT', name:'Sei', price:'0.7654', change:'+4.32%', volume:'0.5亿', icon:'SE'},
+      {symbol:'MEME/USDT', name:'Memecoin', price:'0.0012', change:'+12.34%', volume:'0.3亿', icon:'ME'},
+      {symbol:'BLUR/USDT', name:'Blur', price:'0.6543', change:'-1.23%', volume:'0.4亿', icon:'BL'},
+      {symbol:'RDNT/USDT', name:'Radiant', price:'0.3456', change:'+1.89%', volume:'0.2亿', icon:'RD'},
+      {symbol:'LDO/USDT', name:'Lido', price:'2.45', change:'-0.67%', volume:'0.5亿', icon:'LD'},
+      {symbol:'APE/USDT', name:'ApeCoin', price:'1.45', change:'+2.34%', volume:'0.3亿', icon:'AP'},
+      {symbol:'GALA/USDT', name:'GALA', price:'0.0234', change:'+5.43%', volume:'0.4亿', icon:'GA'},
+      {symbol:'MANA/USDT', name:'Decentraland', price:'0.4567', change:'-0.89%', volume:'0.2亿', icon:'MA'},
+      {symbol:'SAND/USDT', name:'The Sandbox', price:'0.3456', change:'+1.12%', volume:'0.3亿', icon:'SA'},
+      {symbol:'AXS/USDT', name:'Axie', price:'6.78', change:'-2.34%', volume:'0.4亿', icon:'AX'},
+      {symbol:'GMT/USDT', name:'STEPN', price:'0.2345', change:'+3.45%', volume:'0.3亿', icon:'GM'},
+      {symbol:'CHZ/USDT', name:'Chiliz', price:'0.0765', change:'+0.78%', volume:'0.2亿', icon:'CH'},
+      {symbol:'FLOW/USDT', name:'Flow', price:'0.9876', change:'-1.56%', volume:'0.2亿', icon:'FL'},
+      {symbol:'ICP/USDT', name:'Internet Computer', price:'12.34', change:'+0.45%', volume:'0.3亿', icon:'IC'},
+      {symbol:'XTZ/USDT', name:'Tezos', price:'0.9876', change:'+0.23%', volume:'0.1亿', icon:'XT'},
+      {symbol:'EOS/USDT', name:'EOS', price:'0.7654', change:'-0.45%', volume:'0.3亿', icon:'EO'},
+      {symbol:'XLM/USDT', name:'恒星币', price:'0.1123', change:'+0.89%', volume:'0.2亿', icon:'XL'},
+      {symbol:'ALGO/USDT', name:'Algorand', price:'0.1567', change:'-0.34%', volume:'0.1亿', icon:'AL'},
+      {symbol:'KAVA/USDT', name:'Kava', price:'0.6789', change:'+1.23%', volume:'0.1亿', icon:'KA'},
+      {symbol:'COMP/USDT', name:'Compound', price:'45.67', change:'-0.89%', volume:'0.2亿', icon:'CO'},
+      {symbol:'AAVE/USDT', name:'Aave', price:'98.76', change:'+0.67%', volume:'0.3亿', icon:'AA'},
+      {symbol:'MKR/USDT', name:'Maker', price:'3,456.78', change:'-1.23%', volume:'0.2亿', icon:'MK'},
+      {symbol:'SNX/USDT', name:'Synthetix', price:'2.34', change:'+1.56%', volume:'0.2亿', icon:'SN'},
+      {symbol:'GRT/USDT', name:'The Graph', price:'0.1234', change:'+0.45%', volume:'0.2亿', icon:'GR'},
+      {symbol:'BAT/USDT', name:'BAT', price:'0.2345', change:'-0.67%', volume:'0.1亿', icon:'BA'},
+      {symbol:'ZRX/USDT', name:'0x', price:'0.3456', change:'+0.78%', volume:'0.1亿', icon:'ZR'},
+      {symbol:'1INCH/USDT', name:'1inch', price:'0.4567', change:'-0.34%', volume:'0.1亿', icon:'1I'},
+      {symbol:'ENJ/USDT', name:'Enjin', price:'0.2345', change:'+0.56%', volume:'0.1亿', icon:'EN'},
+      {symbol:'OMG/USDT', name:'OMG', price:'0.4567', change:'-0.78%', volume:'0.1亿', icon:'OM'},
+      {symbol:'ZIL/USDT', name:'Zilliqa', price:'0.0234', change:'+0.34%', volume:'0.1亿', icon:'ZI'},
+      {symbol:'ONT/USDT', name:'本体', price:'0.1567', change:'-0.23%', volume:'0.1亿', icon:'ON'},
+      {symbol:'NEO/USDT', name:'小蚁', price:'12.34', change:'+0.56%', volume:'0.1亿', icon:'NE'},
+      {symbol:'QTUM/USDT', name:'量子链', price:'2.34', change:'-0.45%', volume:'0.1亿', icon:'QU'},
+      {symbol:'IOST/USDT', name:'IOST', price:'0.0078', change:'+0.12%', volume:'0.1亿', icon:'IO'},
+      {symbol:'WAVES/USDT', name:'Waves', price:'1.23', change:'+0.67%', volume:'0.1亿', icon:'WA'},
+      {symbol:'DASH/USDT', name:'达世币', price:'34.56', change:'-0.89%', volume:'0.1亿', icon:'DA'},
+      {symbol:'ZEC/USDT', name:'大零币', price:'45.67', change:'+0.34%', volume:'0.1亿', icon:'ZE'},
+      {symbol:'XMR/USDT', name:'门罗币', price:'145.67', change:'-1.23%', volume:'0.1亿', icon:'XM'},
+      {symbol:'KSM/USDT', name:'Kusama', price:'234.56', change:'+0.78%', volume:'0.1亿', icon:'KS'},
+      {symbol:'REN/USDT', name:'Ren', price:'0.0876', change:'+1.23%', volume:'0.1亿', icon:'RE'},
+      {symbol:'REEF/USDT', name:'Reef', price:'0.0023', change:'+2.34%', volume:'0.1亿', icon:'RE'},
+      {symbol:'CELR/USDT', name:'Celer', price:'0.0543', change:'+0.89%', volume:'0.1亿', icon:'CE'},
+      {symbol:'STPT/USDT', name:'Standard', price:'0.0432', change:'-0.45%', volume:'0.1亿', icon:'ST'},
+      {symbol:'CTK/USDT', name:'CertiK', price:'0.5432', change:'+1.12%', volume:'0.1亿', icon:'CT'},
+      {symbol:'LIT/USDT', name:'Litentry', price:'0.4321', change:'+2.45%', volume:'0.1亿', icon:'LI'},
+      {symbol:'KNC/USDT', name:'Kyber', price:'0.8765', change:'-0.67%', volume:'0.1亿', icon:'KN'},
+      {symbol:'CRV/USDT', name:'Curve', price:'0.4321', change:'+0.56%', volume:'0.2亿', icon:'CR'},
+      {symbol:'SXP/USDT', name:'Swipe', price:'0.3456', change:'-0.23%', volume:'0.1亿', icon:'SX'},
+      {symbol:'DENT/USDT', name:'Dent', price:'0.0012', change:'+0.45%', volume:'0.1亿', icon:'DE'},
+      {symbol:'WIN/USDT', name:'Wink', price:'0.0001', change:'+0.12%', volume:'0.1亿', icon:'WI'},
+      {symbol:'FET/USDT', name:'Fetch', price:'0.5432', change:'+1.78%', volume:'0.1亿', icon:'FE'},
+      {symbol:'COTI/USDT', name:'COTI', price:'0.0876', change:'+0.34%', volume:'0.1亿', icon:'CO'},
+      {symbol:'CHR/USDT', name:'Chromia', price:'0.2345', change:'+0.67%', volume:'0.1亿', icon:'CH'},
+      {symbol:'ALICE/USDT', name:'MyNeighborAlice', price:'1.56', change:'-1.23%', volume:'0.1亿', icon:'AL'},
+      {symbol:'OGN/USDT', name:'Origin', price:'0.2345', change:'+0.45%', volume:'0.1亿', icon:'OG'},
+      {symbol:'BAND/USDT', name:'Band', price:'1.23', change:'-0.56%', volume:'0.1亿', icon:'BA'},
+      {symbol:'DATA/USDT', name:'Streamr', price:'0.0432', change:'+0.23%', volume:'0.1亿', icon:'DA'},
+      {symbol:'DODO/USDT', name:'DODO', price:'0.3456', change:'+0.78%', volume:'0.1亿', icon:'DO'},
+      {symbol:'BEL/USDT', name:'Bella', price:'0.4567', change:'-0.34%', volume:'0.1亿', icon:'BE'},
+      {symbol:'NMR/USDT', name:'Numeraire', price:'12.34', change:'+0.56%', volume:'0.1亿', icon:'NM'},
+      {symbol:'ANT/USDT', name:'Aragon', price:'4.56', change:'-0.12%', volume:'0.1亿', icon:'AN'},
+      {symbol:'BNT/USDT', name:'Bancor', price:'0.4567', change:'+0.34%', volume:'0.1亿', icon:'BN'},
+      {symbol:'CVC/USDT', name:'Civic', price:'0.1234', change:'+0.23%', volume:'0.1亿', icon:'CV'},
+      {symbol:'DATA/USDT', name:'Streamr', price:'0.0432', change:'+0.11%', volume:'0.1亿', icon:'DA'},
+      {symbol:'DNT/USDT', name:'District0x', price:'0.0043', change:'+0.12%', volume:'0.1亿', icon:'DN'},
+      {symbol:'FUN/USDT', name:'FunFair', price:'0.0054', change:'+0.34%', volume:'0.1亿', icon:'FU'},
+      {symbol:'GNO/USDT', name:'Gnosis', price:'3245.67', change:'+0.45%', volume:'0.1亿', icon:'GN'},
+      {symbol:'LRC/USDT', name:'Loopring', price:'0.2345', change:'+0.56%', volume:'0.2亿', icon:'LR'},
+      {symbol:'MITH/USDT', name:'Mithril', price:'0.0432', change:'-0.23%', volume:'0.1亿', icon:'MI'},
+      {symbol:'NANO/USDT', name:'Nano', price:'0.8765', change:'+0.34%', volume:'0.1亿', icon:'NA'},
+      {symbol:'OXT/USDT', name:'Orchid', price:'0.2345', change:'-0.45%', volume:'0.1亿', icon:'OX'},
+      {symbol:'POLY/USDT', name:'Polymath', price:'0.0876', change:'+0.12%', volume:'0.1亿', icon:'PO'},
+      {symbol:'POWR/USDT', name:'PowerLedger', price:'0.0432', change:'+0.56%', volume:'0.1亿', icon:'PO'},
+      {symbol:'QKC/USDT', name:'QuarkChain', price:'0.0034', change:'+0.23%', volume:'0.1亿', icon:'QK'},
+      {symbol:'RCN/USDT', name:'Ripio', price:'0.0234', change:'-0.12%', volume:'0.1亿', icon:'RC'},
+      {symbol:'RDN/USDT', name:'Raiden', price:'0.0432', change:'+0.34%', volume:'0.1亿', icon:'RD'},
+      {symbol:'REP/USDT', name:'Augur', price:'14.56', change:'-0.67%', volume:'0.1亿', icon:'RE'},
+      {symbol:'SNT/USDT', name:'Status', price:'0.0432', change:'+0.12%', volume:'0.1亿', icon:'SN'},
+      {symbol:'STEEM/USDT', name:'Steem', price:'0.2345', change:'+0.45%', volume:'0.1亿', icon:'ST'},
+      {symbol:'STORJ/USDT', name:'Storj', price:'0.4567', change:'+0.56%', volume:'0.1亿', icon:'ST'},
+      {symbol:'SUB/USDT', name:'Substratum', price:'0.0432', change:'+0.23%', volume:'0.1亿', icon:'SU'},
+      {symbol:'TNB/USDT', name:'TimeNewBank', price:'0.0023', change:'+0.11%', volume:'0.1亿', icon:'TN'},
+      {symbol:'UTK/USDT', name:'Utrust', price:'0.0876', change:'+0.34%', volume:'0.1亿', icon:'UT'},
+      {symbol:'VET/USDT', name:'唯链', price:'0.0234', change:'+0.56%', volume:'0.2亿', icon:'VE'},
+      {symbol:'WTC/USDT', name:'沃尔顿', price:'1.23', change:'-0.23%', volume:'0.1亿', icon:'WT'},
+      {symbol:'XEM/USDT', name:'新经币', price:'0.0345', change:'+0.12%', volume:'0.1亿', icon:'XE'},
+      {symbol:'XVG/USDT', name:'Verge', price:'0.0043', change:'+0.34%', volume:'0.1亿', icon:'XV'},
+      {symbol:'ZEN/USDT', name:'Horizen', price:'8.76', change:'-0.45%', volume:'0.1亿', icon:'ZE'}
+    ];
+
+let filtered = coinData;
+
+// 渲染列表
+function renderList(data) {
+  const tbody = document.getElementById('coinListBody');
+  tbody.innerHTML = data.map(item => {
+    const isUp = item.change.startsWith('+');
+    return `
+      <div class="coin-item" onclick="goToTrade('${item.symbol}')">
+        <div class="col-name">
+          <div class="coin-icon">${item.icon}</div>
+          <div class="coin-info">
+            <div class="coin-symbol">${item.symbol}</div>
+            <div class="coin-desc">${item.name}</div>
+          </div>
+        </div>
+        <div class="col-price">${item.price}</div>
+        <div class="col-change ${isUp ? 'change-up' : 'change-down'}">${item.change}</div>
+        <div class="col-volume">${item.volume}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// 跳转到交易页
+function goToTrade(symbol) {
+  localStorage.setItem('trade_pair', symbol);
+  window.location.href = 'trade-detail.html';
+}
+
+// 搜索功能
+document.getElementById('searchInput').addEventListener('input', e => {
+  const keyword = e.target.value.trim().toUpperCase();
+  if (!keyword) {
+    filtered = coinData;
+  } else {
+    filtered = coinData.filter(item => 
+      item.symbol.toUpperCase().includes(keyword) || 
+      item.name.toUpperCase().includes(keyword)
+    );
+  }
+  renderList(filtered);
+});
+
+// 页面加载
+document.addEventListener('DOMContentLoaded', () => {
+  renderList(coinData);
+});
+  </script>
+</body>
+</html>
+

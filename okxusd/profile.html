@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binex - 个人中心</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#1E2026;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:80px;}
+    .header{padding:20px;text-align:center;border-bottom:1px solid #2B2F36;position:relative;}
+    .back{position:absolute;top:20px;left:20px;color:#888;text-decoration:none;}
+    .logo{font-size:18px;font-weight:bold;color:#F3BA2F;}
+    .container{max-width:480px;margin:0 auto;padding:20px;}
+    .user-card{background:linear-gradient(135deg,#2B2F36,#1E2026);border-radius:12px;padding:25px;border:1px solid #474D57;margin-bottom:20px;text-align:center;}
+    .avatar{width:70px;height:70px;border-radius:50%;background:#F3BA2F;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:bold;color:#000;margin:0 auto 15px;}
+    .username{font-size:20px;font-weight:bold;margin-bottom:5px;}
+    .user-email{font-size:13px;color:#888;margin-bottom:15px;}
+    .user-id{font-size:12px;color:#666;font-family:monospace;}
+    .menu-list{background:#2B2F36;border-radius:10px;overflow:hidden;border:1px solid #474D57;}
+    .menu-item{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid #474D57;text-decoration:none;color:#fff;}
+    .menu-item:last-child{border-bottom:none;}
+    .menu-item:hover{background:#383c44;}
+    .menu-left{display:flex;align-items:center;gap:12px;}
+    .menu-icon{width:24px;height:24px;color:#F3BA2F;text-align:center;line-height:24px;font-size:18px;}
+    .menu-text{font-size:15px;}
+    .menu-arrow{color:#666;font-size:12px;}
+    .logout-btn{width:100%;padding:14px;background:transparent;color:#F23645;border:1px solid #F23645;border-radius:8px;font-size:16px;cursor:pointer;margin-top:25px;}
+    .logout-btn:hover{background:#F2364515;}
+  </style>
+</head>
+<body>
+  <a href="assets.html" class="back">← 返回</a>
+  <div class="header">
+    <div class="logo">BINEX · 个人中心</div>
+  </div>
+
+  <div class="container">
+    <!-- 用户信息卡片 -->
+    <div class="user-card">
+      <div class="avatar" id="userAvatar">B</div>
+      <div class="username" id="userName">未登录</div>
+      <div class="user-email" id="userEmail">-</div>
+      <div class="user-id">ID: <span id="userId">----</span></div>
+    </div>
+
+    <!-- 功能菜单 -->
+    <div class="menu-list">
+      <a href="security.html" class="menu-item">
+        <div class="menu-left">
+          <span class="menu-icon">🔒</span>
+          <span class="menu-text">安全中心</span>
+        </div>
+        <span class="menu-arrow">›</span>
+      </a>
+      <a href="deposit-records.html" class="menu-item">
+        <div class="menu-left">
+          <span class="menu-icon">⬇️</span>
+          <span class="menu-text">充值记录</span>
+        </div>
+        <span class="menu-arrow">›</span>
+      </a>
+      <a href="withdraw-records.html" class="menu-item">
+        <div class="menu-left">
+          <span class="menu-icon">⬆️</span>
+          <span class="menu-text">提现记录</span>
+        </div>
+        <span class="menu-arrow">›</span>
+      </a>
+      <a href="#" class="menu-item" id="tradeHistory">
+        <div class="menu-left">
+          <span class="menu-icon">📊</span>
+          <span class="menu-text">交易记录</span>
+        </div>
+        <span class="menu-arrow">›</span>
+      </a>
+      <a href="#" class="menu-item" id="feedback">
+        <div class="menu-left">
+          <span class="menu-icon">💬</span>
+          <span class="menu-text">意见反馈</span>
+        </div>
+        <span class="menu-arrow">›</span>
+      </a>
+      <a href="#" class="menu-item" id="about">
+        <div class="menu-left">
+          <span class="menu-icon">ℹ️</span>
+          <span class="menu-text">关于我们</span>
+        </div>
+        <span class="menu-arrow">›</span>
+      </a>
+    </div>
+
+    <button class="logout-btn" id="logoutBtn">退出登录</button>
+  </div>
+
+  <script>
+    // 加载用户信息
+    function loadUserInfo() {
+      const user = JSON.parse(localStorage.getItem('binex_user'));
+      if (user) {
+        const name = user.username || '用户';
+        document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
+        document.getElementById('userName').textContent = name;
+        document.getElementById('userEmail').textContent = user.email || '未绑定邮箱';
+        document.getElementById('userId').textContent = 'BNX' + Date.now().toString().slice(-8);
+      }
+    }
+
+    // 退出登录
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('确定要退出登录吗？')) {
+        localStorage.removeItem('binex_user');
+        window.location.href = 'login.html';
+      }
+    });
+
+    // 占位菜单
+    document.getElementById('tradeHistory').addEventListener('click', e => {
+      e.preventDefault();
+      alert('交易记录功能开发中');
+    });
+    document.getElementById('feedback').addEventListener('click', e => {
+      e.preventDefault();
+      alert('意见反馈功能开发中');
+    });
+    document.getElementById('about').addEventListener('click', e => {
+      e.preventDefault();
+      alert('BINEX 数字资产交易平台\n版本：1.0.0');
+    });
+
+    document.addEventListener('DOMContentLoaded', loadUserInfo);
+  </script>
+</body>
+</html>

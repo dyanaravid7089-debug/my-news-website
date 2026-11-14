@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binex - 安全中心</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#1E2026;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:80px;}
+    .header{padding:20px;text-align:center;border-bottom:1px solid #2B2F36;position:relative;}
+    .back{position:absolute;top:20px;left:20px;color:#888;text-decoration:none;}
+    .logo{font-size:18px;font-weight:bold;color:#F3BA2F;}
+    .container{max-width:480px;margin:0 auto;padding:20px;}
+    .status-card{background:linear-gradient(135deg,#183a2c,#1E2026);border-radius:12px;padding:20px;margin-bottom:25px;border:1px solid #08998140;}
+    .status-title{font-size:14px;color:#888;margin-bottom:8px;}
+    .status-text{font-size:16px;font-weight:bold;color:#089981;}
+    .menu-list{background:#2B2F36;border-radius:10px;overflow:hidden;border:1px solid #474D57;}
+    .menu-item{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid #474D57;cursor:pointer;}
+    .menu-item:last-child{border-bottom:none;}
+    .menu-item:hover{background:#383c44;}
+    .menu-left{display:flex;align-items:center;gap:12px;}
+    .menu-icon{font-size:20px;}
+    .menu-text{font-size:15px;}
+    .menu-right{display:flex;align-items:center;gap:8px;}
+    .menu-status{font-size:12px;color:#089981;}
+    .menu-arrow{color:#666;font-size:14px;}
+    .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:100;}
+    .modal.hidden{display:none !important;}
+    .modal-card{background:#2B2F36;border-radius:12px;padding:25px;width:90%;max-width:400px;border:1px solid #474D57;}
+    .modal-title{font-size:18px;font-weight:bold;text-align:center;margin-bottom:20px;color:#F3BA2F;}
+    .form-group{margin-bottom:15px;}
+    label{display:block;margin-bottom:6px;color:#ccc;font-size:14px;}
+    input{width:100%;padding:12px;background:#1E2026;border:1px solid #474D57;border-radius:6px;color:#fff;font-size:15px;}
+    input:focus{outline:none;border-color:#F3BA2F;}
+    .btn-row{display:flex;gap:10px;margin-top:20px;}
+    .btn{flex:1;padding:12px;border-radius:6px;font-size:15px;font-weight:bold;border:none;cursor:pointer;}
+    .btn-cancel{background:#474D57;color:#fff;}
+    .btn-confirm{background:#F3BA2F;color:#000;}
+    .tips{font-size:12px;color:#888;margin-top:5px;}
+    .qrcode{text-align:center;margin:15px 0;}
+    .qrcode-box{width:150px;height:150px;background:#fff;border-radius:8px;margin:0 auto;display:flex;align-items:center;justify-content:center;color:#000;font-size:12px;text-align:center;padding:10px;}
+    .secret-key{background:#1E2026;padding:8px 12px;border-radius:4px;font-family:monospace;font-size:14px;margin:8px 0;word-break:break-all;}
+  </style>
+</head>
+<body>
+  <a href="profile.html" class="back">← 返回</a>
+  <div class="header">
+    <div class="logo">BINEX · 安全中心</div>
+  </div>
+
+  <div class="container">
+    <!-- 安全状态 -->
+    <div class="status-card">
+      <div class="status-title">安全等级</div>
+      <div class="status-text">✓ 基础安全已设置</div>
+    </div>
+
+    <!-- 安全设置列表 -->
+    <div class="menu-list">
+      <div class="menu-item" id="loginPwd">
+        <div class="menu-left">
+          <span class="menu-icon">🔐</span>
+          <span class="menu-text">登录密码</span>
+        </div>
+        <div class="menu-right">
+          <span class="menu-status">已设置</span>
+          <span class="menu-arrow">›</span>
+        </div>
+      </div>
+      <div class="menu-item" id="tradePwd">
+        <div class="menu-left">
+          <span class="menu-icon">💰</span>
+          <span class="menu-text">交易密码</span>
+        </div>
+        <div class="menu-right">
+          <span class="menu-status" id="tradePwdStatus">未设置</span>
+          <span class="menu-arrow">›</span>
+        </div>
+      </div>
+      <div class="menu-item" id="googleAuth">
+        <div class="menu-left">
+          <span class="menu-icon">🔢</span>
+          <span class="menu-text">Google 验证器</span>
+        </div>
+        <div class="menu-right">
+          <span class="menu-status" id="googleStatus">未开启</span>
+          <span class="menu-arrow">›</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 修改登录密码弹窗 -->
+  <div class="modal hidden" id="loginPwdModal">
+    <div class="modal-card">
+      <div class="modal-title">修改登录密码</div>
+      <div class="form-group">
+        <label>原密码</label>
+        <input type="password" id="oldLoginPwd" placeholder="请输入原密码">
+      </div>
+      <div class="form-group">
+        <label>新密码</label>
+        <input type="password" id="newLoginPwd" placeholder="6-20位字符">
+      </div>
+      <div class="form-group">
+        <label>确认新密码</label>
+        <input type="password" id="confirmLoginPwd" placeholder="再次输入新密码">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-cancel" id="closeLoginPwd">取消</button>
+        <button class="btn btn-confirm" id="saveLoginPwd">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 设置交易密码弹窗 -->
+  <div class="modal hidden" id="tradePwdModal">
+    <div class="modal-card">
+      <div class="modal-title" id="tradePwdTitle">设置交易密码</div>
+      <div class="form-group">
+        <label>交易密码</label>
+        <input type="password" id="newTradePwd" placeholder="6位数字">
+      </div>
+      <div class="form-group">
+        <label>确认密码</label>
+        <input type="password" id="confirmTradePwd" placeholder="再次输入">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-cancel" id="closeTradePwd">取消</button>
+        <button class="btn btn-confirm" id="saveTradePwd">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google验证器弹窗 -->
+  <div class="modal hidden" id="googleModal">
+    <div class="modal-card">
+      <div class="modal-title">Google 验证器</div>
+      <div class="qrcode">
+        <div class="qrcode-box">
+          扫码下载<br>
+          Google Authenticator
+        </div>
+      </div>
+      <div class="tips" style="text-align:center;margin-bottom:10px;">或手动输入密钥：</div>
+      <div class="secret-key" id="secretKey">JBSWY3DPEHPK3PXP</div>
+      <div class="form-group">
+        <label>输入6位验证码</label>
+        <input type="text" id="googleCode" placeholder="打开验证器查看" maxlength="6">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-cancel" id="closeGoogle">取消</button>
+        <button class="btn btn-confirm" id="saveGoogle">确认绑定</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 弹窗控制
+    function openModal(id){document.getElementById(id).classList.remove('hidden');}
+    function closeModal(id){document.getElementById(id).classList.add('hidden');}
+
+    // 登录密码
+    document.getElementById('loginPwd').addEventListener('click',()=>openModal('loginPwdModal'));
+    document.getElementById('closeLoginPwd').addEventListener('click',()=>closeModal('loginPwdModal'));
+    document.getElementById('saveLoginPwd').addEventListener('click',()=>{
+      const oldPwd=document.getElementById('oldLoginPwd').value;
+      const newPwd=document.getElementById('newLoginPwd').value;
+      const confirmPwd=document.getElementById('confirmLoginPwd').value;
+      if(!oldPwd||!newPwd||!confirmPwd){alert('请填写完整');return;}
+      if(newPwd!==confirmPwd){alert('两次密码不一致');return;}
+      if(newPwd.length<6){alert('密码至少6位');return;}
+      alert('登录密码修改成功！');
+      closeModal('loginPwdModal');
+    });
+
+    // 交易密码
+    let hasTradePwd=localStorage.getItem('binex_trade_pwd')?true:false;
+    function updateTradePwdStatus(){
+      document.getElementById('tradePwdStatus').textContent=hasTradePwd?'已设置':'未设置';
+    }
+    updateTradePwdStatus();
+
+    document.getElementById('tradePwd').addEventListener('click',()=>{
+      if(hasTradePwd){
+        document.getElementById('tradePwdTitle').textContent='修改交易密码';
+      }else{
+        document.getElementById('tradePwdTitle').textContent='设置交易密码';
+      }
+      openModal('tradePwdModal');
+    });
+    document.getElementById('closeTradePwd').addEventListener('click',()=>closeModal('tradePwdModal'));
+    document.getElementById('saveTradePwd').addEventListener('click',()=>{
+      const pwd=document.getElementById('newTradePwd').value;
+      const confirm=document.getElementById('confirmTradePwd').value;
+      if(!pwd||!confirm){alert('请填写完整');return;}
+      if(!/^\d{6}$/.test(pwd)){alert('交易密码必须是6位数字');return;}
+      if(pwd!==confirm){alert('两次密码不一致');return;}
+      localStorage.setItem('binex_trade_pwd',pwd);
+      hasTradePwd=true;
+      updateTradePwdStatus();
+      alert('交易密码保存成功！');
+      closeModal('tradePwdModal');
+    });
+
+    // Google验证器
+    let googleEnabled=localStorage.getItem('binex_google_auth')==='true';
+    function updateGoogleStatus(){
+      document.getElementById('googleStatus').textContent=googleEnabled?'已开启':'未开启';
+    }
+    updateGoogleStatus();
+
+    document.getElementById('googleAuth').addEventListener('click',()=>{
+      if(googleEnabled){
+        if(confirm('已开启验证器，是否关闭？')){
+          localStorage.setItem('binex_google_auth','false');
+          googleEnabled=false;
+          updateGoogleStatus();
+          alert('已关闭');
+        }
+        return;
+      }
+      openModal('googleModal');
+    });
+    document.getElementById('closeGoogle').addEventListener('click',()=>closeModal('googleModal'));
+    document.getElementById('saveGoogle').addEventListener('click',()=>{
+      const code=document.getElementById('googleCode').value.trim();
+      if(code.length!==6){alert('请输入6位验证码');return;}
+      // 演示：任意6位数字即可绑定
+      localStorage.setItem('binex_google_auth','true');
+      googleEnabled=true;
+      updateGoogleStatus();
+      alert('Google验证器绑定成功！');
+      closeModal('googleModal');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>持仓记录 - Binex</title>
+<script src="config.js"></script>
+<style>
+:root{--gold:#F3BA2F;--bg-dark:#1E2026;--card:#2B2F36;--input:#474D57;--green:#089981;--red:#EF4444;--border-color:#474D57}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background-color:var(--bg-dark);color:var(--text);font-family:-apple-system,sans-serif;padding-bottom:40px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 12px;background:var(--card);position:sticky;top:0;z-index:100}
+.back{font-size:20px;color:var(--text);text-decoration:none}
+.page-title{font-size:18px;font-weight:600;color:var(--gold)}
+.container{padding:16px}
+.record-item{background:var(--card);border-radius:8px;padding:14px;margin-bottom:12px}
+.record-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pair-name{font-size:18px;font-weight:600;color:var(--text)}
+.side-long{color:var(--green);font-weight:600}
+.side-short{color:var(--red);font-weight:600}
+.record-row{display:flex;justify-content:space-between;font-size:14px;margin:4px 0;color:#aaa}
+.empty-tip{text-align:center;color:#666;padding:40px 20px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="positions.html" class="back">←</a>
+  <h1 class="page-title">持仓记录</h1>
+  <span></span>
+</div>
+
+<div class="container" id="recordList">
+  <!-- 记录会在这里显示 -->
+</div>
+
+<script>
+if (typeof DataStore !== 'undefined') {
+  DataStore.log('访问页面', 'position-record.html');
+  if (CONFIG.systemStatus !== 'open') {
+    document.body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#1E2026;color:#fff;font-family:-apple-system,sans-serif;padding:20px;text-align:center"><div style="font-size:48px;margin-bottom:20px">🔧</div><h1 style="font-size:24px;margin-bottom:10px">系统维护中</h1><p style="color:#888">' + (CONFIG.notice || '请稍后再试') + '</p></div>';
+  }
+  if (CONFIG.notice) {
+    const noticeBar = document.createElement('div');
+    noticeBar.style.cssText = 'background:rgba(243,186,47,0.1);color:#F3BA2F;padding:10px;text-align:center;font-size:14px;position:sticky;top:0;z-index:999';
+    noticeBar.textContent = CONFIG.notice;
+    document.body.insertBefore(noticeBar, document.body.firstChild);
+  }
+}
+
+// 加载持仓记录
+function loadRecords(){
+  const list = document.getElementById('recordList');
+  const records = JSON.parse(localStorage.getItem('positionRecords') || '[]');
+  
+  if(records.length === 0){
+    list.innerHTML = '<div class="empty-tip">暂无持仓记录</div>';
+    return;
+  }
+  
+  list.innerHTML = records.map(r => `
+    <div class="record-item">
+      <div class="record-header">
+        <span class="pair-name">${r.pair}</span>
+        <span class="${r.side === '做多' ? 'side-long' : 'side-short'}">${r.side}</span>
+      </div>
+      <div class="record-row"><span>开仓价</span><span>${r.openPrice}</span></div>
+      <div class="record-row"><span>数量</span><span>${r.amount}</span></div>
+      <div class="record-row"><span>开仓时间</span><span>${r.openTime}</span></div>
+      <div class="record-row"><span>状态</span><span style="color:${r.status === '持仓中' ? 'var(--gold)' : '#888'}">${r.status}</span></div>
+    </div>
+  `).join('');
+}
+
+loadRecords();
+</script>
+
+</body>
+</html>

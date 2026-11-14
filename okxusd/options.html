@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binex - 期权</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#1E2026;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:80px;}
+    .header{padding:15px 20px;text-align:center;border-bottom:1px solid #2B2F36;}
+    .logo{font-size:20px;font-weight:bold;color:#F3BA2F;}
+    .container{max-width:480px;margin:0 auto;padding:15px;}
+    .search-box{margin-bottom:15px;}
+    .search-box input{width:100%;padding:12px 15px;background:#2B2F36;border:1px solid #474D57;border-radius:8px;color:#fff;font-size:15px;}
+    .search-box input:focus{outline:none;border-color:#F3BA2F;}
+    .coin-list{background:#2B2F36;border-radius:10px;overflow:hidden;border:1px solid #474D57;}
+    .coin-header{display:flex;padding:12px 15px;background:#1E2026;color:#888;font-size:12px;border-bottom:1px solid #474D57;}
+    .coin-header>div{text-align:center;}
+    .coin-header .col-name{width:40%;text-align:left;}
+    .coin-header .col-price{width:30%;text-align:right;}
+    .coin-header .col-expiry{width:30%;text-align:right;}
+    .coin-item{display:flex;padding:14px 15px;border-bottom:1px solid #474D57;cursor:pointer;}
+    .coin-item:last-child{border-bottom:none;}
+    .coin-item:hover{background:#32363e;}
+    .coin-item>div{display:flex;align-items:center;}
+    .col-name{width:40%;text-align:left;}
+    .coin-icon{width:32px;height:32px;border-radius:50%;background:#474D57;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#F3BA2F;font-size:13px;margin-right:10px;}
+    .coin-info{}
+    .coin-symbol{font-weight:bold;font-size:14px;}
+    .coin-desc{font-size:11px;color:#666;margin-top:2px;}
+    .col-price{width:30%;text-align:right;justify-content:right;font-size:14px;}
+    .col-expiry{width:30%;text-align:right;justify-content:right;font-size:13px;color:#888;}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#2B2F36;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #474D57;}
+    .nav-item{display:flex;flex-direction:column;align-items:center;color:#888;font-size:12px;text-decoration:none;}
+    .nav-item.active{color:#F3BA2F;}
+    .nav-item svg{width:24px;height:24px;margin-bottom:4px;}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">BINEX · 期权</div>
+  </div>
+
+  <div class="container">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="搜索期权...">
+    </div>
+
+    <div class="coin-list">
+      <div class="coin-header">
+        <div class="col-name">期权</div>
+        <div class="col-price">最新价</div>
+        <div class="col-expiry">到期日</div>
+      </div>
+      <div id="coinListBody"></div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>首页</span>
+    </a>
+    <a href="contract.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
+      <span>合约</span>
+    </a>
+    <a href="trade.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+      <span>切换</span>
+    </a>
+    <a href="options.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+      <span>期权</span>
+    </a>
+    <a href="assets.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      <span>资产</span>
+    </a>
+  </nav>
+
+  <script>
+    const coinData = {symbol:'MANA-USDT-26NOV', name:'Decentraland 周期权', price:'0.4567', expiry:'11-26', icon:'MA'},
+  {symbol:'SAND-USDT-26NOV', name:'The Sandbox 周期权', price:'0.3456', expiry:'11-26', icon:'SA'},
+  {symbol:'AXS-USDT-26NOV', name:'Axie 周期权', price:'6.78', expiry:'11-26', icon:'AX'},
+  {symbol:'GMT-USDT-26NOV', name:'STEPN 周期权', price:'0.2345', expiry:'11-26', icon:'GM'},
+  {symbol:'CHZ-USDT-26NOV', name:'Chiliz 周期权', price:'0.0765', expiry:'11-26', icon:'CH'},
+  {symbol:'FLOW-USDT-26NOV', name:'Flow 周期权', price:'0.9876', expiry:'11-26', icon:'FL'},
+  {symbol:'ICP-USDT-26NOV', name:'Internet Computer 周期权', price:'12.34', expiry:'11-26', icon:'IC'},
+  {symbol:'XTZ-USDT-26NOV', name:'Tezos 周期权', price:'0.9876', expiry:'11-26', icon:'XT'},
+  {symbol:'EOS-USDT-26NOV', name:'EOS 周期权', price:'0.7654', expiry:'11-26', icon:'EO'},
+  {symbol:'XLM-USDT-26NOV', name:'恒星币 周期权', price:'0.1123', expiry:'11-26', icon:'XL'},
+  {symbol:'ALGO-USDT-26NOV', name:'Algorand 周期权', price:'0.1567', expiry:'11-26', icon:'AL'},
+  {symbol:'KAVA-USDT-26NOV', name:'Kava 周期权', price:'0.6789', expiry:'11-26', icon:'KA'},
+  {symbol:'COMP-USDT-26NOV', name:'Compound 周期权', price:'45.67', expiry:'11-26', icon:'CO'},
+  {symbol:'AAVE-USDT-26NOV', name:'Aave 周期权', price:'98.76', expiry:'11-26', icon:'AA'},
+  {symbol:'MKR-USDT-26NOV', name:'Maker 周期权', price:'3,456.78', expiry:'11-26', icon:'MK'},
+  {symbol:'SNX-USDT-26NOV', name:'Synthetix 周期权', price:'2.34', expiry:'11-26', icon:'SN'},
+  {symbol:'GRT-USDT-26NOV', name:'The Graph 周期权', price:'0.1234', expiry:'11-26', icon:'GR'},
+  {symbol:'BAT-USDT-26NOV', name:'BAT 周期权', price:'0.2345', expiry:'11-26', icon:'BA'},
+  {symbol:'ZRX-USDT-26NOV', name:'0x 周期权', price:'0.3456', expiry:'11-26', icon:'ZR'},
+  {symbol:'1INCH-USDT-26NOV', name:'1inch 周期权', price:'0.4567', expiry:'11-26', icon:'1I'},
+  {symbol:'ENJ-USDT-26NOV', name:'Enjin 周期权', price:'0.2345', expiry:'11-26', icon:'EN'},
+  {symbol:'OMG-USDT-26NOV', name:'OMG 周期权', price:'0.4567', expiry:'11-26', icon:'OM'},
+  {symbol:'ZIL-USDT-26NOV', name:'Zilliqa 周期权', price:'0.0234', expiry:'11-26', icon:'ZI'},
+  {symbol:'ONT-USDT-26NOV', name:'本体 周期权', price:'0.1567', expiry:'11-26', icon:'ON'},
+  {symbol:'NEO-USDT-26NOV', name:'小蚁 周期权', price:'12.34', expiry:'11-26', icon:'NE'},
+  {symbol:'QTUM-USDT-26NOV', name:'量子链 周期权', price:'2.34', expiry:'11-26', icon:'QU'},
+  {symbol:'IOST-USDT-26NOV', name:'IOST 周期权', price:'0.0078', expiry:'11-26', icon:'IO'},
+  {symbol:'WAVES-USDT-26NOV', name:'Waves 周期权', price:'1.23', expiry:'11-26', icon:'WA'},
+  {symbol:'DASH-USDT-26NOV', name:'达世币 周期权', price:'34.56', expiry:'11-26', icon:'DA'},
+  {symbol:'ZEC-USDT-26NOV', name:'大零币 周期权', price:'45.67', expiry:'11-26', icon:'ZE'},
+  {symbol:'XMR-USDT-26NOV', name:'门罗币 周期权', price:'145.67', expiry:'11-26', icon:'XM'},
+  {symbol:'KSM-USDT-26NOV', name:'Kusama 周期权', price:'234.56', expiry:'11-26', icon:'KS'},
+  {symbol:'REN-USDT-26NOV', name:'Ren 周期权', price:'0.0876', expiry:'11-26', icon:'RE'},
+  {symbol:'REEF-USDT-26NOV', name:'Reef 周期权', price:'0.0023', expiry:'11-26', icon:'RE'},
+  {symbol:'CELR-USDT-26NOV', name:'Celer 周期权', price:'0.0543', expiry:'11-26', icon:'CE'},
+  {symbol:'STPT-USDT-26NOV', name:'Standard 周期权', price:'0.0432', expiry:'11-26', icon:'ST'},
+  {symbol:'CTK-USDT-26NOV', name:'CertiK 周期权', price:'0.5432', expiry:'11-26', icon:'CT'},
+  {symbol:'KNC-USDT-26NOV', name:'Kyber 周期权', price:'0.8765', expiry:'11-26', icon:'KN'},
+  {symbol:'CRV-USDT-26NOV', name:'Curve 周期权', price:'0.4321', expiry:'11-26', icon:'CR'},
+  {symbol:'SXP-USDT-26NOV', name:'Swipe 周期权', price:'0.3456', expiry:'11-26', icon:'SX'},
+  {symbol:'DENT-USDT-26NOV', name:'Dent 周期权', price:'0.0012', expiry:'11-26', icon:'DE'},
+  {symbol:'WIN-USDT-26NOV', name:'Wink 周期权', price:'0.0001', expiry:'11-26', icon:'WI'},
+  {symbol:'FET-USDT-26NOV', name:'Fetch 周期权', price:'0.5432', expiry:'11-26', icon:'FE'},
+  {symbol:'COTI-USDT-26NOV', name:'COTI 周期权', price:'0.0876', expiry:'11-26', icon:'CO'},
+  {symbol:'CHR-USDT-26NOV', name:'Chromia 周期权', price:'0.2345', expiry:'11-26', icon:'CH'},
+  {symbol:'ALICE-USDT-26NOV', name:'MyNeighborAlice 周期权', price:'1.56', expiry:'11-26', icon:'AL'},
+  {symbol:'OGN-USDT-26NOV', name:'Origin 周期权', price:'0.2345', expiry:'11-26', icon:'OG'},
+  {symbol:'BAND-USDT-26NOV', name:'Band 周期权', price:'1.23', expiry:'11-26', icon:'BA'},
+  {symbol:'DODO-USDT-26NOV', name:'DODO 周期权', price:'0.3456', expiry:'11-26', icon:'DO'},
+  {symbol:'BEL-USDT-26NOV', name:'Bella 周期权', price:'0.4567', expiry:'11-26', icon:'BE'},
+  {symbol:'LRC-USDT-26NOV', name:'Loopring 周期权', price:'0.2345', expiry:'11-26', icon:'LR'},
+  {symbol:'VET-USDT-26NOV', name:'唯链 周期权', price:'0.0234', expiry:'11-26', icon:'VE'},
+  {symbol:'WTC-USDT-26NOV', name:'沃尔顿 周期权', price:'1.23', expiry:'11-26', icon:'WT'},
+  {symbol:'XEM-USDT-26NOV', name:'新经币 周期权', price:'0.0345', expiry:'11-26', icon:'XE'},
+  {symbol:'XVG-USDT-26NOV', name:'Verge 周期权', price:'0.0043', expiry:'11-26', icon:'XV'},
+  {symbol:'ZEN-USDT-26NOV', name:'Horizen 周期权', price:'8.76', expiry:'11-26', icon:'ZE'}
+];
+
+let filtered = coinData;
+
+function renderList(data) {
+  const tbody = document.getElementById('coinListBody');
+  tbody.innerHTML = data.map(item => {
+    return `
+      <div class="coin-item" onclick="goToTrade('${item.symbol}')">
+        <div class="col-name">
+          <div class="coin-icon">${item.icon}</div>
+          <div class="coin-info">
+            <div class="coin-symbol">${item.symbol}</div>
+            <div class="coin-desc">${item.name}</div>
+          </div>
+        </div>
+        <div class="col-price">${item.price}</div>
+        <div class="col-expiry">${item.expiry}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function goToTrade(symbol) {
+  localStorage.setItem('option_pair', symbol);
+  window.location.href = 'trade-detail.html';
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  const keyword = e.target.value.trim().toUpperCase();
+  if (!keyword) {
+    filtered = coinData;
+  } else {
+    filtered = coinData.filter(item => 
+      item.symbol.toUpperCase().includes(keyword) || 
+      item.name.toUpperCase().includes(keyword)
+    );
+  }
+  renderList(filtered);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderList(coinData);
+});
+  </script>
+</body>
+</html>
+

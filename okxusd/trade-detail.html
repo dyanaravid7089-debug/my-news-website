@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binex - 交易详情</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#1E2026;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:80px;}
+    .header{padding:15px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2B2F36;}
+    .back-btn{color:#F3BA2F;text-decoration:none;font-size:14px;}
+    .pair-info{text-align:center;}
+    .pair-name{font-size:18px;font-weight:bold;}
+    .container{max-width:480px;margin:0 auto;padding:15px;}
+    .price-card{background:#2B2F36;border-radius:10px;padding:20px;margin-bottom:15px;}
+    .current-price{font-size:32px;font-weight:bold;margin-bottom:10px;}
+    .price-up{color:#089981;}
+    .price-down{color:#F23645;}
+    .price-row{display:flex;justify-content:space-between;font-size:13px;margin-top:8px;color:#ccc;}
+    .tabs{display:flex;background:#2B2F36;border-radius:8px;margin-bottom:15px;overflow:hidden;}
+    .tab{flex:1;padding:10px;text-align:center;font-size:14px;color:#888;cursor:pointer;}
+    .tab.active{background:#F3BA2F;color:#111;font-weight:bold;}
+    .tab-content{display:none;}
+    .tab-content.active{display:block;}
+    .order-form{background:#2B2F36;border-radius:10px;padding:15px;}
+    .form-row{margin-bottom:12px;}
+    label{display:block;font-size:13px;color:#ccc;margin-bottom:6px;}
+    input, select{width:100%;padding:10px;background:#474D57;border:none;border-radius:6px;color:#fff;font-size:14px;}
+    .input-group{display:flex;gap:8px;}
+    .input-group input{flex:1;}
+    .btn-percent{padding:10px 8px;background:#474D57;border:none;border-radius:6px;color:#fff;font-size:12px;cursor:pointer;}
+    .balance-info{font-size:12px;color:#888;margin:8px 0;}
+    .cost-info{font-size:13px;color:#F3BA2F;margin:8px 0;}
+    .btn-buy{width:100%;padding:14px;background:#089981;border:none;border-radius:6px;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-top:8px;}
+    .btn-sell{background:#F23645;}
+    .order-item{background:#2B2F36;border-radius:8px;padding:12px;margin-bottom:8px;}
+    .order-header{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;}
+    .order-type-long{color:#089981;}
+    .order-type-short{color:#F23645;}
+    .order-detail{font-size:12px;color:#888;}
+    .empty-tip{text-align:center;color:#666;padding:30px;font-size:14px;}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#2B2F36;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #474D57;}
+    .nav-item{display:flex;flex-direction:column;align-items:center;color:#888;font-size:12px;text-decoration:none;}
+    .nav-item.active{color:#F3BA2F;}
+    .nav-item svg{width:24px;height:24px;margin-bottom:4px;}
+    .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:100;}
+    .modal.active{display:flex;}
+    .modal-content{background:#2B2F36;border-radius:10px;padding:25px;width:90%;max-width:360px;}
+    .modal-title{font-size:18px;font-weight:bold;margin-bottom:15px;text-align:center;}
+    .modal-text{font-size:14px;color:#ccc;margin-bottom:20px;text-align:center;line-height:1.6;}
+    .modal-buttons{display:flex;gap:10px;}
+    .modal-btn{flex:1;padding:10px;border:none;border-radius:6px;font-size:14px;cursor:pointer;}
+    .modal-btn.cancel{background:#474D57;color:#fff;}
+    .modal-btn.confirm{background:#F3BA2F;color:#111;font-weight:bold;}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="contract.html" class="back-btn">← 返回</a>
+    <div class="pair-info">
+      <div class="pair-name" id="pairName">BTC/USDT</div>
+    </div>
+    <div style="width:50px;"></div>
+  </div>
+
+  <div class="container">
+    <div class="price-card">
+      <div class="current-price price-up" id="currentPrice">$ 68,523.45</div>
+      <div class="price-row">
+        <span>24h高</span><span id="highPrice">$ 68,800.00</span>
+      </div>
+      <div class="price-row">
+        <span>24h低</span><span id="lowPrice">$ 67,200.00</span>
+      </div>
+      <div class="price-row">
+        <span>24h成交量</span><span id="volume">1,250.56 BTC</span>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="place-order">下单</div>
+      <div class="tab" data-tab="positions">持仓</div>
+      <div class="tab" data-tab="orders">订单</div>
+      <div class="tab" data-tab="history">历史</div>
+    </div>
+
+    <div id="place-order" class="tab-content active">
+      <div class="order-form">
+        <div class="form-row">
+          <label>方向</label>
+          <select id="tradeDirection">
+            <option value="long">做多（买入）</option>
+            <option value="short">做空（卖出）</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>杠杆</label>
+          <select id="leverage">
+            <option value="1">1x</option>
+            <option value="5">5x</option>
+            <option value="10">10x</option>
+            <option value="20">20x</option>
+            <option value="50">50x</option>
+            <option value="100">100x</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>下单价格（USDT）</label>
+          <input type="number" id="orderPrice" value="68523.45">
+        </div>
+        <div class="form-row">
+          <label>数量（BTC）</label>
+          <div class="input-group">
+            <input type="number" id="orderAmount" value="0.001" step="0.001">
+            <button class="btn-percent" onclick="setPercent(25)">25%</button>
+            <button class="btn-percent" onclick="setPercent(50)">50%</button>
+            <button class="btn-percent" onclick="setPercent(100)">100%</button>
+          </div>
+        </div>
+        <div class="balance-info">可用余额：<span id="balance">0.00</span> USDT</div>
+        <div class="cost-info">预估成本：<span id="cost">0.00</span> USDT | 强平价：<span id="liquidPrice">0.00</span></div>
+        <button class="btn-buy" id="submitBtn" onclick="submitOrder()">确认开仓</button>
+      </div>
+    </div>
+
+    <div id="positions" class="tab-content">
+      <div id="positionsList">
+        <div class="empty-tip">暂无持仓</div>
+      </div>
+    </div>
+
+    <div id="orders" class="tab-content">
+      <div id="ordersList">
+        <div class="empty-tip">暂无订单</div>
+      </div>
+    </div>
+
+    <div id="history" class="tab-content">
+      <div id="historyList">
+        <div class="empty-tip">暂无历史记录</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="confirmModal">
+    <div class="modal-content">
+      <div class="modal-title">确认下单</div>
+      <div class="modal-text" id="modalText"></div>
+      <div class="modal-buttons">
+        <button class="modal-btn cancel" onclick="closeModal()">取消</button>
+        <button class="modal-btn confirm" onclick="confirmOrder()">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>首页</span>
+    </a>
+    <a href="contract.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>
+      <span>合约</span>
+    </a>
+    <a href="trade.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+      <span>切换</span>
+    </a>
+    <a href="options.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+      <span>期权</span>
+    </a>
+    <a href="assets.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      <span>资产</span>
+    </a>
+  </nav>
+
+  <script>
+    // 初始化数据
+    let currentPair = localStorage.getItem('trade_pair') || 'BTC/USDT';
+    document.getElementById('pairName').textContent = currentPair;
+
+    let balance = parseFloat(localStorage.getItem('user_balance')) || 0;
+    let positions = JSON.parse(localStorage.getItem('positions') || '[]');
+    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    let history = JSON.parse(localStorage.getItem('trade_history') || '[]');
+
+    // 更新余额显示
+    function updateBalanceDisplay() {
+      document.getElementById('balance').textContent = balance.toFixed(2);
+    }
+    updateBalanceDisplay();
+
+    // 实时计算成本和强平价
+    function updateCost() {
+      const price = parseFloat(document.getElementById('orderPrice').value) || 0;
+      const amount = parseFloat(document.getElementById('orderAmount').value) || 0;
+      const leverage = parseFloat(document.getElementById('leverage').value) || 1;
+      
+      const cost = (price * amount) / leverage;
+      const direction = document.getElementById('tradeDirection').value;
+      let liquidPrice = 0;
+      
+      if (direction === 'long') {
+        liquidPrice = price * (1 - 1/leverage * 0.9);
+      } else {
+        liquidPrice = price * (1 + 1/leverage * 0.9);
+      }
+      
+      document.getElementById('cost').textContent = cost.toFixed(2);
+      document.getElementById('liquidPrice').textContent = liquidPrice.toFixed(2);
+    }
+
+    document.getElementById('orderPrice').addEventListener('input', updateCost);
+    document.getElementById('orderAmount').addEventListener('input', updateCost);
+    document.getElementById('leverage').addEventListener('change', updateCost);
+    document.getElementById('tradeDirection').addEventListener('change', updateCost);
+    updateCost();
+
+    // 百分比填充
+    function setPercent(pct) {
+      const price = parseFloat(document.getElementById('orderPrice').value) || 0;
+      const leverage = parseFloat(document.getElementById('leverage').value) || 1;
+      if (price <= 0) return;
+      const maxAmount = (balance * leverage) / price;
+      document.getElementById('orderAmount').value = (maxAmount * pct / 100).toFixed(4);
+      updateCost();
+    }
+
+    // 标签页切换
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+        if (tab.dataset.tab === 'positions') renderPositions();
+        if (tab.dataset.tab === 'orders') renderOrders();
+        if (tab.dataset.tab === 'history') renderHistory();
+      });
+    });
+
+    // 提交订单弹窗
+    let pendingOrder = null;
+    function submitOrder() {
+      const price = parseFloat(document.getElementById('orderPrice').value);
+      const amount = parseFloat(document.getElementById('orderAmount').value);
+      const leverage = parseFloat(document.getElementById('leverage').value);
+      const direction = document.getElementById('tradeDirection').value;
+      const cost = (price * amount) / leverage;
+
+      if (cost > balance) {
+        alert('余额不足！');
+        return;
+      }
+
+      pendingOrder = { price, amount, leverage, direction, cost };
+      document.getElementById('modalText').innerHTML = 
+        `交易对：${currentPair}<br>` +
+        `方向：${direction === 'long' ? '做多' : '做空'}<br>` +
+        `价格：${price.toFixed(2)} USDT<br>` +
+        `数量：${amount} BTC<br>` +
+        `杠杆：${leverage}x<br>` +
+        `预估成本：${cost.toFixed(2)} USDT`;
+      document.getElementById('confirmModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('confirmModal').classList.remove('active');
+      pendingOrder = null;
+    }
+
+    function confirmOrder() {
+      if (!pendingOrder) return;
+      
+      const { price, amount, leverage, direction, cost } = pendingOrder;
+      
+      // 扣除余额
+      balance -= cost;
+      localStorage.setItem('user_balance', balance);
+      updateBalanceDisplay();
+      
+      // 添加持仓
+      const newPosition = {
+        id: Date.now(),
+        pair: currentPair,
+        direction: direction,
+        entryPrice: price,
+        amount: amount,
+        leverage: leverage,
+        openTime: new Date().toLocaleString()
+      };
+      positions.unshift(newPosition);
+      localStorage.setItem('positions', JSON.stringify(positions));
+      
+      // 添加历史记录
+      const historyItem = {
+        id: Date.now(),
+        pair: currentPair,
+        type: '开仓',
+        direction: direction,
+        price: price,
+        amount: amount,
+        cost: cost,
+        time: new Date().toLocaleString()
+      };
+      history.unshift(historyItem);
+      localStorage.setItem('trade_history', JSON.stringify(history));
+      
+      closeModal();
+      alert('开仓成功！');
+      document.getElementById('orderAmount').value = '';
+      updateCost();
+    }
+
+    // 渲染持仓列表
+    function renderPositions() {
+      const list = document.getElementById('positionsList');
+      if (positions.length === 0) {
+        list.innerHTML = '<div class="empty-tip">暂无持仓</div>';
+        return;
+      }
+      list.innerHTML = positions.map(pos => {
+        const pnl = (Math.random() * 200 - 100).toFixed(2);
+        const isProfit = parseFloat(pnl) >= 0;
+        return `
+          <div class="order-item">
+            <div class="order-header">
+              <span>${pos.pair}</span>
+              <span class="order-type-${pos.direction}">${pos.direction === 'long' ? '做多' : '做空'} ${pos.leverage}x</span>
+            </div>
+            <div class="order-detail">
+              开仓：${pos.entryPrice} | 数量：${pos.amount}<br>
+              盈亏：<span style="color:${isProfit?'#089981':'#F23645'}">${isProfit?'+':''}${pnl} USDT</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 渲染订单
+    function renderOrders() {
+      const list = document.getElementById('ordersList');
+      if (orders.length === 0) {
+        list.innerHTML = '<div class="empty-tip">暂无订单</div>';
+        return;
+      }
+     list.innerHTML = orders.map(order => {
+        return `
+          <div class="order-item">
+            <div class="order-header">
+              <span>${order.pair}</span>
+              <span class="order-type-${order.direction}">${order.direction === 'long' ? '买入' : '卖出'}</span>
+            </div>
+            <div class="order-detail">
+              价格：${order.price} | 数量：${order.amount}<br>
+              时间：${order.time}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 渲染历史记录
+    function renderHistory() {
+      const list = document.getElementById('historyList');
+      if (history.length === 0) {
+        list.innerHTML = '<div class="empty-tip">暂无历史记录</div>';
+        return;
+      }
+      list.innerHTML = history.map(item => {
+        const isOpen = item.type === '开仓';
+        return `
+          <div class="order-item">
+            <div class="order-header">
+              <span>${item.pair}</span>
+              <span style="color:${isOpen?'#F3BA2F':'#089981'}">${item.type}</span>
+            </div>
+            <div class="order-detail">
+              ${item.direction === 'long' ? '做多' : '做空'} | 价格：${item.price}<br>
+              数量：${item.amount} | 成本：${item.cost} USDT<br>
+              ${item.time}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 页面加载时渲染数据
+    document.addEventListener('DOMContentLoaded', () => {
+      renderPositions();
+      renderOrders();
+      renderHistory();
+    });
+  </script>
+</body>
+</html>
+

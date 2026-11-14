@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Binex - 注册</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#1E2026;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+    .header{padding:20px;text-align:center;border-bottom:1px solid #2B2F36;}
+    .logo{font-size:24px;font-weight:bold;color:#F3BA2F;}
+    .back{position:absolute;top:20px;left:20px;color:#888;text-decoration:none;}
+    .container{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+    .card{width:100%;max-width:400px;background:#2B2F36;border-radius:12px;padding:30px;}
+    .card h2{text-align:center;margin-bottom:25px;color:#F3BA2F;}
+    .form-group{margin-bottom:18px;}
+    label{display:block;margin-bottom:8px;color:#ccc;font-size:14px;}
+    input{width:100%;padding:12px;background:#1E2026;border:1px solid #474D57;border-radius:6px;color:#fff;font-size:15px;}
+    input:focus{outline:none;border-color:#F3BA2F;}
+    .code-row{display:flex;gap:10px;}
+    .code-row input{flex:1;}
+    .code-btn{padding:12px 12px;background:#474D57;border:none;border-radius:6px;color:#fff;white-space:nowrap;cursor-pointer;font-size:13px;}
+    .code-btn:disabled{opacity:0.6;cursor:not-allowed;}
+    .btn{width:100%;padding:14px;background:#F3BA2F;color:#000;font-size:16px;font-weight:bold;border:none;border-radius:6px;cursor:pointer;margin-top:8px;}
+    .btn:disabled{opacity:0.6;cursor:not-allowed;}
+    .link{text-align:center;margin-top:20px;color:#888;font-size:14px;}
+    .link a{color:#F3BA2F;text-decoration:none;}
+    .tips{font-size:12px;color:#666;margin-top:5px;}
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back">← 返回</a>
+  <div class="header">
+    <div class="logo">BINEX</div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2>创建账号</h2>
+      
+      <form id="registerForm">
+        <div class="form-group">
+          <label>用户名</label>
+          <input type="text" id="username" placeholder="请设置用户名">
+        </div>
+
+        <div class="form-group">
+          <label>邮箱地址</label>
+          <input type="email" id="email" placeholder="请输入邮箱">
+        </div>
+
+        <div class="form-group">
+          <label>邮箱验证码</label>
+          <div class="code-row">
+            <input type="text" id="emailCode" placeholder="6位数字" maxlength="6">
+            <button type="button" class="code-btn" id="sendCode">发送验证码</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>登录密码</label>
+          <input type="password" id="password" placeholder="请设置6-20位密码">
+        </div>
+
+        <div class="form-group">
+          <label>确认密码</label>
+          <input type="password" id="confirmPwd" placeholder="请再次输入密码">
+        </div>
+
+        <button type="submit" class="btn">立即注册</button>
+      </form>
+
+      <div class="link">
+        已有账号？<a href="login.html">去登录</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 验证码倒计时
+    let countdown = 60;
+    let timer = null;
+    
+    function startCountdown() {
+      const btn = document.getElementById('sendCode');
+      btn.disabled = true;
+      countdown = 60;
+      btn.textContent = `${countdown}秒后重发`;
+      timer = setInterval(() => {
+        countdown--;
+        btn.textContent = `${countdown}秒后重发`;
+        if (countdown <= 0) {
+          clearInterval(timer);
+          btn.disabled = false;
+          btn.textContent = '发送验证码';
+        }
+      }, 1000);
+    }
+
+    // 发送验证码
+    document.getElementById('sendCode').addEventListener('click', () => {
+      const email = document.getElementById('email').value.trim();
+      if (!email) {
+        alert('请先输入邮箱地址');
+        return;
+      }
+      startCountdown();
+      alert('演示版：验证码已发送（随便填6位数字即可，如 123456）');
+    });
+
+    // 注册提交
+    document.getElementById('registerForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const code = document.getElementById('emailCode').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPwd = document.getElementById('confirmPwd').value;
+
+      if (!username || !email || !code || !password || !confirmPwd) {
+        alert('请填写完整信息');
+        return;
+      }
+      if (username.length < 2) {
+        alert('用户名至少2个字符');
+        return;
+      }
+      if (code.length !== 6) {
+        alert('请输入6位验证码');
+        return;
+      }
+      if (password.length < 6 || password.length > 20) {
+        alert('密码长度为6-20位');
+        return;
+      }
+      if (password !== confirmPwd) {
+        alert('两次输入的密码不一致');
+        return;
+      }
+
+      // 模拟注册成功，保存到本地
+      const userData = { username, email, registerTime: Date.now() };
+      localStorage.setItem('binex_user', JSON.stringify(userData));
+      alert('注册成功！即将跳转到登录页');
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
